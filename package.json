@@ -1,0 +1,26 @@
+{
+	"name": "js-serializer",
+	"version": "1.0.0",
+	"description": "This package is designed for convenient and flexible serialization of JavaScript objects.",
+	"main": "dist/index.js",
+	"module": "dist/index.mjs",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "tsc",
+		"dev": "tsx ./src/index.ts",
+		"test": "jest"
+	},
+	"keywords": [],
+	"author": "Danil Solomin <work@kyzinatra.ru>",
+	"license": "ISC",
+	"type": "commonjs",
+	"devDependencies": {
+		"@jest/globals": "^29.7.0",
+		"@types/jest": "^29.5.14",
+		"jest": "^29.7.0",
+		"ts-jest": "^29.2.5",
+		"ts-node": "^10.9.2",
+		"tsx": "^4.19.2",
+		"typescript": "^5.7.3"
+	}
+}
