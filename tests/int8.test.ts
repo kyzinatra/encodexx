@@ -1,4 +1,4 @@
-import { ArraySingle, Serializer, t } from "../src";
+import { ArraySingle, Serializer, t, TSchema } from "../src";
 
 describe("t.int8 type", () => {
 	it("should serialize and deserialize 127 correctly", () => {

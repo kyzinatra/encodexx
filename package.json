@@ -7,7 +7,7 @@
 	"types": "dist/index.d.ts",
 	"scripts": {
 		"build": "tsc",
-		"dev": "tsx ./src/index.ts",
+		"dev": "npm tun test; tsx ./src/index.ts",
 		"test": "jest"
 	},
 	"keywords": [],

@@ -2,19 +2,17 @@ import { parseName } from "../../utils/parse-name";
 import { Buffer } from "../buffer";
 import { TypeMatchError } from "../error/type-match";
 import { TCustomType, TYPE_SYMBOL } from "../type/custom-type";
-import { TArraysTypes, TConvertSchemeToType, TSchemeObject } from "./index.type";
+import {
+	TArraysTypes,
+	TCompiledSchema,
+	TConvertSchemaToType,
+	TSchemaObject,
+	TSerializerOptions,
+	TStringifiedSchema,
+} from "./index.type";
 
-type TCompiledSchema<T = any> = {
-	encode(buff: Buffer, obj: T): void;
-	decode(buff: Buffer): T;
-};
-
-type TSerializerOptions = {
-	strict?: boolean;
-};
-
-export class Serializer<T extends TSchemeObject> {
-	private compiledSchema: TCompiledSchema<TConvertSchemeToType<T>>;
+export class Serializer<T extends TSchemaObject> {
+	private compiledSchema: TCompiledSchema<TConvertSchemaToType<T>>;
 
 	constructor(type: T, options?: TSerializerOptions) {
 		this.compiledSchema = this.compileSchema(type, options?.strict);
@@ -24,7 +22,7 @@ export class Serializer<T extends TSchemeObject> {
 		return !!(typeof type === "object" && type && TYPE_SYMBOL in type);
 	}
 	private compileSchema(
-		schema: TSchemeObject | TArraysTypes | TCustomType,
+		schema: TSchemaObject | TArraysTypes | TCustomType,
 		strict?: boolean
 	): TCompiledSchema {
 		if (this.isCustomType(schema)) {
@@ -37,6 +35,9 @@ export class Serializer<T extends TSchemeObject> {
 						throw new TypeMatchError(`schema ${parseName(schema.name)} doesn't match ${obj}`);
 					}
 					schema.encode(buff, obj);
+				},
+				stringify() {
+					return parseName(schema.name);
 				},
 			};
 		}
@@ -60,6 +61,9 @@ export class Serializer<T extends TSchemeObject> {
 					}
 					return result;
 				},
+				stringify() {
+					return [compiledItem.stringify()];
+				},
 			};
 		}
 
@@ -69,6 +73,7 @@ export class Serializer<T extends TSchemeObject> {
 				key,
 				encode: compiledChild.encode,
 				decode: compiledChild.decode,
+				stringify: compiledChild.stringify,
 			};
 		});
 		return {
@@ -86,6 +91,13 @@ export class Serializer<T extends TSchemeObject> {
 				}
 				return obj;
 			},
+			stringify() {
+				const obj: Record<string, any> = {};
+				for (let i = 0; i < entries.length; i++) {
+					obj[entries[i].key] = entries[i].stringify();
+				}
+				return obj;
+			},
 		};
 	}
 
@@ -94,15 +106,17 @@ export class Serializer<T extends TSchemeObject> {
 		return this.compiledSchema.decode(buff);
 	}
 
-	encode(obj: TConvertSchemeToType<T>) {
+	encode(obj: TConvertSchemaToType<T>) {
 		const buff = new Buffer();
 		this.compiledSchema.encode(buff, obj);
 		return buff;
 	}
 
 	parse() {}
-	stringify() {}
+	toJSON(): TStringifiedSchema<T> {
+		return this.compiledSchema.stringify() as TStringifiedSchema<T>;
+	}
 	equal() {}
 	shallowEqual() {}
-	getParsedScheme() {}
+	getParsedSchema() {}
 }

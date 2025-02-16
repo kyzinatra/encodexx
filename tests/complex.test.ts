@@ -1,4 +1,4 @@
-import { ArraySingle, Serializer, t } from "../src";
+import { ArraySingle, Serializer, t, TSchema } from "../src";
 
 describe("Complex Integration Tests", () => {
 	it("should serialize and deserialize a complex nested structure using all types", () => {
