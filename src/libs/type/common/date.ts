@@ -1,6 +1,6 @@
 import { customType } from "../custom-type";
 
-export const date = customType<Date>({
+export const date = customType({
 	decode(buff) {
 		return buff.readDate();
 	},
@@ -10,5 +10,5 @@ export const date = customType<Date>({
 	equal(data) {
 		return data instanceof Date;
 	},
-	name: Symbol("date"),
+	name: "date",
 });

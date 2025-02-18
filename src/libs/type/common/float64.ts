@@ -1,6 +1,6 @@
 import { customType } from "../custom-type";
 
-export const float64 = customType<number>({
+export const float64 = customType({
 	decode(buff) {
 		return buff.readFloat64();
 	},
@@ -10,5 +10,5 @@ export const float64 = customType<number>({
 	equal(data) {
 		return typeof data === "number";
 	},
-	name: Symbol("float64"),
+	name: "float64",
 });

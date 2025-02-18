@@ -178,7 +178,7 @@ describe("Complex Integration Tests", () => {
 					id: t.bigint64,
 					value: t.or(t.int32, t.float32, t.str),
 					nested: {
-						key: t.or(t.uint16, t.none),
+						key: t.or(t.uint16, t.none, t.enumerate("KEY1", "KEY2")),
 						list: [t.or(t.bool, t.boolArr, t.or(t.str, t.int8))],
 					},
 				},
@@ -251,7 +251,7 @@ describe("Complex Integration Tests", () => {
 					id: -987654321098765432n,
 					value: "High",
 					nested: {
-						key: null,
+						key: "KEY2" as const,
 						list: ["nested string", false],
 					},
 				},

@@ -1,6 +1,6 @@
 import { customType } from "../custom-type";
 
-export const str = customType<string>({
+export const str = customType({
 	decode(buff) {
 		return buff.readString();
 	},
@@ -10,5 +10,5 @@ export const str = customType<string>({
 	equal(data) {
 		return typeof data === "string";
 	},
-	name: Symbol("string"),
+	name: "str",
 });

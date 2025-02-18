@@ -1,7 +1,7 @@
 import { customType } from "../custom-type";
 const test = new BigInt64Array(1);
 
-export const bigint64 = customType<bigint>({
+export const bigint64 = customType({
 	decode(buff) {
 		return buff.readBigInt64();
 	},
@@ -14,5 +14,5 @@ export const bigint64 = customType<bigint>({
 		test[0] = data;
 		return test[0] === data;
 	},
-	name: Symbol("bigint64"),
+	name: "bigint64",
 });

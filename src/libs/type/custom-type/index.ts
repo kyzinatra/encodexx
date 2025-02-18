@@ -3,7 +3,7 @@ import { Buffer } from "../../buffer";
 export const TYPE_SYMBOL = Symbol("custom-type-symbol");
 
 export type TCustomType<K = any> = {
-	name: string | symbol;
+	readonly name: string;
 	decode: (buffer: Buffer) => K;
 	encode: (buffer: Buffer, value: K) => unknown;
 	equal: (data: unknown) => data is K;

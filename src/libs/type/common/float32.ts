@@ -1,6 +1,6 @@
 import { customType } from "../custom-type";
 
-export const float32 = customType<number>({
+export const float32 = customType({
 	decode(buff) {
 		return buff.readFloat32();
 	},
@@ -12,5 +12,5 @@ export const float32 = customType<number>({
 		const rounded = Math.round(data * 1e7) / 1e7;
 		return Math.abs(data - rounded) < Number.EPSILON;
 	},
-	name: Symbol("float32"),
+	name: "float32",
 });

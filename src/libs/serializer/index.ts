@@ -1,6 +1,7 @@
-import { parseName } from "../../utils/parse-name";
 import { Buffer } from "../buffer";
+import { OutdatedError } from "../error/outdated";
 import { TypeMatchError } from "../error/type-match";
+import { t } from "../type/common";
 import { TCustomType, TYPE_SYMBOL } from "../type/custom-type";
 import {
 	TArraysTypes,
@@ -8,17 +9,16 @@ import {
 	TConvertSchemaToType,
 	TSchemaObject,
 	TSerializerOptions,
-	TStringifiedSchema,
 } from "./index.type";
 
 export class Serializer<T extends TSchemaObject> {
 	private compiledSchema: TCompiledSchema<TConvertSchemaToType<T>>;
 
-	constructor(type: T, options?: TSerializerOptions) {
+	constructor(private type: T, private options?: TSerializerOptions) {
 		this.compiledSchema = this.compileSchema(type, options?.strict);
 	}
 
-	private isCustomType(type: unknown): type is TCustomType<any> {
+	private isCustomType(type: unknown): type is TCustomType {
 		return !!(typeof type === "object" && type && TYPE_SYMBOL in type);
 	}
 	private compileSchema(
@@ -27,32 +27,40 @@ export class Serializer<T extends TSchemaObject> {
 	): TCompiledSchema {
 		if (this.isCustomType(schema)) {
 			return {
-				decode(buff) {
-					return schema.decode(buff);
-				},
-				encode(buff, obj) {
-					if (strict && !schema.equal(obj)) {
-						throw new TypeMatchError(`schema ${parseName(schema.name)} doesn't match ${obj}`);
-					}
-					schema.encode(buff, obj);
-				},
-				stringify() {
-					return parseName(schema.name);
-				},
+				decode: (buff) => schema.decode(buff),
+				//? I don't wanna run if (strict) condition every time so made 2 types of functions
+				encode: strict
+					? (buff, obj) => {
+							if (!schema.equal(obj)) {
+								throw new TypeMatchError(`schema ${schema.name} doesn't match ${obj}`);
+							}
+							schema.encode(buff, obj);
+					  }
+					: (buff, obj) => schema.encode(buff, obj),
 			};
 		}
+
 		if (Array.isArray(schema)) {
 			const compiledItem = this.compileSchema(schema[0], strict);
 			return {
-				encode(buff, arr: any[]) {
-					if (strict && !Array.isArray(arr)) {
-						throw new TypeMatchError(`array schema doesn't match ${arr}`);
-					}
-					buff.writeUint32(arr.length);
-					for (let i = 0; i < arr.length; i++) {
-						compiledItem.encode(buff, arr[i]);
-					}
-				},
+				encode: strict
+					? (buff, arr: any[]) => {
+							if (strict && !Array.isArray(arr)) {
+								throw new TypeMatchError(`array schema doesn't match ${arr}`);
+							}
+							const len = arr.length;
+							buff.writeUint32(len);
+							for (let i = 0; i < len; i++) {
+								compiledItem.encode(buff, arr[i]);
+							}
+					  }
+					: (buff, arr: any[]) => {
+							const len = arr.length;
+							buff.writeUint32(len);
+							for (let i = 0; i < len; i++) {
+								compiledItem.encode(buff, arr[i]);
+							}
+					  },
 				decode(buff) {
 					const len = buff.readUint32();
 					const result = new Array(len);
@@ -61,19 +69,15 @@ export class Serializer<T extends TSchemaObject> {
 					}
 					return result;
 				},
-				stringify() {
-					return [compiledItem.stringify()];
-				},
 			};
 		}
 
-		const entries = Object.entries(schema).map(([key, child]) => {
-			const compiledChild = this.compileSchema(child, strict);
+		const entries = Object.keys(schema).map((key) => {
+			const compiledChild = this.compileSchema(schema[key], strict);
 			return {
 				key,
 				encode: compiledChild.encode,
 				decode: compiledChild.decode,
-				stringify: compiledChild.stringify,
 			};
 		});
 		return {
@@ -91,32 +95,32 @@ export class Serializer<T extends TSchemaObject> {
 				}
 				return obj;
 			},
-			stringify() {
-				const obj: Record<string, any> = {};
-				for (let i = 0; i < entries.length; i++) {
-					obj[entries[i].key] = entries[i].stringify();
-				}
-				return obj;
-			},
 		};
 	}
 
 	decode(buff: Buffer) {
 		buff.resetCursor();
+
+		if (this.options?.version) {
+			const buffVersion = buff.readString();
+			console.log(buffVersion, this.options);
+			if (buffVersion !== this.options.version) throw new OutdatedError(buffVersion, this.options.version);
+		}
+
 		return this.compiledSchema.decode(buff);
 	}
 
-	encode(obj: TConvertSchemaToType<T>) {
-		const buff = new Buffer();
+	encode(obj: TConvertSchemaToType<T>, buff?: Buffer) {
+		if (!buff) buff = new Buffer();
+		else buff.resetCursor();
+
+		if (this.options?.version) {
+			buff.writeString(this.options.version);
+		}
+
 		this.compiledSchema.encode(buff, obj);
 		return buff;
 	}
 
-	parse() {}
-	toJSON(): TStringifiedSchema<T> {
-		return this.compiledSchema.stringify() as TStringifiedSchema<T>;
-	}
-	equal() {}
-	shallowEqual() {}
-	getParsedSchema() {}
+	isEqual<K extends TSchemaObject>(schema: TSchemaObject) {}
 }

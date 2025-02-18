@@ -1,7 +1,7 @@
 import { customType } from "../custom-type";
 const test = new Int8Array(1);
 
-export const int8 = customType<number>({
+export const int8 = customType({
 	decode(buff) {
 		return buff.readInt8();
 	},
@@ -14,5 +14,5 @@ export const int8 = customType<number>({
 
 		return test[0] === data;
 	},
-	name: Symbol("int8"),
+	name: "int8",
 });

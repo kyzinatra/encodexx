@@ -1,17 +1,17 @@
 {
-	"name": "js-serializer",
+	"name": "encodex",
 	"version": "1.0.0",
 	"description": "This package is designed for convenient and flexible serialization of JavaScript objects.",
 	"main": "dist/index.js",
 	"module": "dist/index.mjs",
 	"types": "dist/index.d.ts",
 	"scripts": {
-		"build": "tsc",
-		"dev": "npm tun test; tsx ./src/index.ts",
+		"build": "npm tun test; tsc",
+		"dev": "tsx ./src/index.ts",
 		"test": "jest"
 	},
 	"keywords": [],
-	"author": "Danil Solomin <work@kyzinatra.ru>",
+	"author": "kyzinatra <main@kyzinatra.ru>",
 	"license": "ISC",
 	"type": "commonjs",
 	"devDependencies": {

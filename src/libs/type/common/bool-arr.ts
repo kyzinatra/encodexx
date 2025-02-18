@@ -1,12 +1,12 @@
 import { TypeMatchError } from "../../error/type-match";
 import { customType } from "../custom-type";
 
-export const boolArr = customType<boolean[]>({
+export const boolArr = customType({
 	decode(buffer) {
 		const length = buffer.readUint32();
 		const values = new Uint8Array(buffer.readBuffer((length + 7) >> 3));
 
-		const result = new Array(length);
+		const result: boolean[] = new Array(length);
 
 		for (let i = 0; i < length; i++) {
 			//? Apply a mask with the desired i on the value from values and use & to check if there's a 1
@@ -35,5 +35,5 @@ export const boolArr = customType<boolean[]>({
 	equal(data) {
 		return Array.isArray(data) && data.every((el) => typeof el === "boolean");
 	},
-	name: Symbol("boolArr"),
+	name: "boolArr",
 });

@@ -4,8 +4,8 @@ import { customType } from "../custom-type";
 export function enumerate<T extends string[]>(...strs: T) {
 	if (strs.length > 65_535) throw new Error("Max enumeration items length is 64535");
 
-	return customType<T[number]>({
-		decode(buffer) {
+	return customType({
+		decode(buffer): T[number] {
 			return strs[buffer.readUint16()];
 		},
 		encode(buffer, value) {
@@ -16,6 +16,6 @@ export function enumerate<T extends string[]>(...strs: T) {
 		equal(data): data is T[number] {
 			return strs.includes(String(data));
 		},
-		name: Symbol(`Enum<${strs.join("|")}>`),
+		name: `Enum<${strs.join("|")}>`,
 	});
 }

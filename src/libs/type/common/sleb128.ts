@@ -1,6 +1,6 @@
 import { customType } from "../custom-type";
 
-export const sleb128 = customType<bigint>({
+export const sleb128 = customType({
 	decode(buff) {
 		return buff.readSleb128();
 	},
@@ -10,5 +10,5 @@ export const sleb128 = customType<bigint>({
 	equal(data) {
 		return typeof data === "bigint";
 	},
-	name: Symbol("sleb128"),
+	name: "sleb128",
 });

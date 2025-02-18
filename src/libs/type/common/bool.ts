@@ -1,6 +1,6 @@
 import { customType } from "../custom-type";
 
-export const bool = customType<boolean>({
+export const bool = customType({
 	decode(buff) {
 		return buff.readBoolean();
 	},
@@ -10,5 +10,5 @@ export const bool = customType<boolean>({
 	equal(data) {
 		return typeof data === "boolean";
 	},
-	name: Symbol("boolean"),
+	name: "boolean",
 });

@@ -1,6 +1,6 @@
 import { customType } from "../custom-type";
 
-export const none = customType<null>({
+export const none = customType({
 	decode() {
 		return null;
 	},
@@ -8,5 +8,5 @@ export const none = customType<null>({
 	equal(data) {
 		return data === null;
 	},
-	name: Symbol("null"),
+	name: "null",
 });

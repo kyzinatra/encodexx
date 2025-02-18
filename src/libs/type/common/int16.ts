@@ -1,7 +1,7 @@
 import { customType } from "../custom-type";
 const test = new Int16Array(1);
 
-export const int16 = customType<number>({
+export const int16 = customType({
 	decode(buff) {
 		return buff.readInt16();
 	},
@@ -13,5 +13,5 @@ export const int16 = customType<number>({
 		test[0] = data;
 		return test[0] === data;
 	},
-	name: Symbol("int16"),
+	name: "int16",
 });

@@ -1,6 +1,6 @@
 import { customType } from "../custom-type";
 
-export const undef = customType<undefined>({
+export const undef = customType({
 	decode() {
 		return undefined;
 	},
@@ -8,5 +8,5 @@ export const undef = customType<undefined>({
 	equal(data) {
 		return data === undefined;
 	},
-	name: Symbol("undefined"),
+	name: "undef",
 });

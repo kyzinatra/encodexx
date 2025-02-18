@@ -1,7 +1,7 @@
 import { customType } from "../custom-type";
 const test = new Uint16Array(1);
 
-export const uint32 = customType<number>({
+export const uint32 = customType({
 	decode(buff) {
 		return buff.readUint32();
 	},
@@ -13,5 +13,5 @@ export const uint32 = customType<number>({
 		test[0] = data;
 		return test[0] === data;
 	},
-	name: Symbol("uint32"),
+	name: "uint32",
 });
