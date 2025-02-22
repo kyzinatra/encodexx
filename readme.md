@@ -8,6 +8,8 @@ Visit [encodexx.net](https://encodexx.net) or install via:
 npm i encodexx
 ```
 
+[![Build Size](https://img.shields.io/bundlephobia/minzip/encodexx?label=bundle%20size&style=flat&colorA=000000&colorB=000000)](https://bundlephobia.com/result?p=encodexx)
+
 Encodexx uses a low-level JavaScript API for fast encoding and decoding.
 
 ## Defining a Schema
