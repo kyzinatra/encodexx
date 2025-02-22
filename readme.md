@@ -12,6 +12,8 @@ npm i encodexx
 
 Encodexx uses a low-level JavaScript API for fast encoding and decoding.
 
+[Demo on codesanbox](https://codesandbox.io/p/sandbox/gd4jhj)
+
 ## Defining a Schema
 
 A schema describes the data structure for serialization. Keep in mind that the same schema structure is required for both serialization and deserialization.
