@@ -48,7 +48,7 @@ class Buffer {
             throw new out_of_range_1.OutOfRangeError(type, val);
     }
     get length() {
-        return this._buffer.byteLength;
+        return this.end;
     }
     writeBuffer(_buffer) {
         if (_buffer instanceof ArrayBuffer) {
