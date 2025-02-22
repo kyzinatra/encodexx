@@ -20,7 +20,7 @@ describe("Encoded Buffer Size Tests", () => {
 		};
 
 		const encoded = serializer.encode(original);
-		expect(encoded.length).toEqual(2_097_152);
+		expect(encoded.length).toEqual(1888894);
 
 		const decoded = serializer.decode(encoded);
 		expect(decoded.items.length).toEqual(100000);
@@ -45,7 +45,7 @@ describe("Encoded Buffer Size Tests", () => {
 		}
 
 		const encoded = serializer.encode(original);
-		expect(encoded.length).toEqual(262144);
+		expect(encoded.length).toEqual(137288);
 
 		const decoded = serializer.decode(encoded);
 		expect(decoded.paragraphs.length).toEqual(500);

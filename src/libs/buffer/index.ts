@@ -55,7 +55,7 @@ export class Buffer {
 	}
 
 	get length() {
-		return this._buffer.byteLength;
+		return this.end;
 	}
 
 	writeBuffer(_buffer: ArrayBuffer | Uint8Array) {
