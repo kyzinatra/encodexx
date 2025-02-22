@@ -91,7 +91,7 @@ new Serializer({
 
 You can create your own types and use them just like the built-in ones. Usually you won't need this, but there are cases when you want low-level `Buffer` access to write your data. See the [documentation](https://encodexx.net/docs) for more details and examples.
 
-```js
+```ts
 import { customType } from "encodexx";
 
 type TMyType = {
@@ -110,7 +110,7 @@ const myType = customType<TMyType>({
     buffer.writeString(val.name);
     buffer.writeUint8(val.age);
   },
-  guard(data): data is { name: string; age: number } {
+  guard(data): data is TMyType {
     if (typeof data !== "object" || !data) return false;
     if (!("name" in data) || typeof data.name !== "string") return false;
     if (!("age" in data) || typeof data.age !== "number") return false;
