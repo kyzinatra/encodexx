@@ -12,7 +12,7 @@ class Buffer {
             const newBuffer = new ArrayBuffer(this.size);
             const newUnitView = new Uint8Array(newBuffer);
             newUnitView.set(this.unitView, 0);
-            this.buffer = newBuffer;
+            this._buffer = newBuffer;
             this.unitView = newUnitView;
             this.view = new DataView(newBuffer);
         }
@@ -30,38 +30,38 @@ class Buffer {
     moveCursorBy(n) {
         this.cursor += n;
     }
+    get buffer() {
+        return this._buffer;
+    }
     constructor(size = KB) {
         this.size = size;
         this._cursor = 0;
         this.end = 0;
         this.textDecoder = new TextDecoder();
         this.textEncoder = new TextEncoder();
-        this.buffer = new ArrayBuffer(size);
-        this.view = new DataView(this.buffer);
-        this.unitView = new Uint8Array(this.buffer);
+        this._buffer = new ArrayBuffer(size);
+        this.view = new DataView(this._buffer);
+        this.unitView = new Uint8Array(this._buffer);
     }
     check(val, type) {
         if (val < types_1.TYPES_RANGES[type][0] || val > types_1.TYPES_RANGES[type][1])
             throw new out_of_range_1.OutOfRangeError(type, val);
     }
-    log() {
-        console.log(this.buffer, this.end);
-    }
     get length() {
-        return this.buffer.byteLength;
+        return this._buffer.byteLength;
     }
-    writeBuffer(buffer) {
-        if (buffer instanceof ArrayBuffer) {
-            buffer = new Uint8Array(buffer);
+    writeBuffer(_buffer) {
+        if (_buffer instanceof ArrayBuffer) {
+            _buffer = new Uint8Array(_buffer);
         }
         //? Typescript check
-        if (buffer instanceof ArrayBuffer)
+        if (_buffer instanceof ArrayBuffer)
             return;
-        this.moveCursorBy(buffer.length);
-        this.unitView.set(buffer, this.cursor - buffer.length);
+        this.moveCursorBy(_buffer.length);
+        this.unitView.set(_buffer, this.cursor - _buffer.length);
     }
     readBuffer(length) {
-        const data = this.buffer.slice(this.cursor, this.cursor + length);
+        const data = this._buffer.slice(this.cursor, this.cursor + length);
         this.moveCursorBy(length);
         return data;
     }

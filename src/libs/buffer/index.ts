@@ -14,7 +14,7 @@ export class Buffer {
 			const newUnitView = new Uint8Array(newBuffer);
 			newUnitView.set(this.unitView, 0);
 
-			this.buffer = newBuffer;
+			this._buffer = newBuffer;
 			this.unitView = newUnitView;
 			this.view = new DataView(newBuffer);
 		}
@@ -33,43 +33,44 @@ export class Buffer {
 		this.cursor += n;
 	}
 	private end: number = 0;
-	private buffer: ArrayBuffer;
+	private _buffer: ArrayBuffer;
 	private view: DataView;
 	private unitView: Uint8Array;
+
+	get buffer() {
+		return this._buffer;
+	}
 
 	private textDecoder = new TextDecoder();
 	private textEncoder = new TextEncoder();
 
 	constructor(private size = KB) {
-		this.buffer = new ArrayBuffer(size);
-		this.view = new DataView(this.buffer);
-		this.unitView = new Uint8Array(this.buffer);
+		this._buffer = new ArrayBuffer(size);
+		this.view = new DataView(this._buffer);
+		this.unitView = new Uint8Array(this._buffer);
 	}
 
 	private check(val: number | bigint, type: keyof TNumberTypes) {
 		if (val < TYPES_RANGES[type][0] || val > TYPES_RANGES[type][1]) throw new OutOfRangeError(type, val);
 	}
 
-	log() {
-		console.log(this.buffer, this.end);
-	}
 	get length() {
-		return this.buffer.byteLength;
+		return this._buffer.byteLength;
 	}
 
-	writeBuffer(buffer: ArrayBuffer | Uint8Array) {
-		if (buffer instanceof ArrayBuffer) {
-			buffer = new Uint8Array(buffer);
+	writeBuffer(_buffer: ArrayBuffer | Uint8Array) {
+		if (_buffer instanceof ArrayBuffer) {
+			_buffer = new Uint8Array(_buffer);
 		}
 
 		//? Typescript check
-		if (buffer instanceof ArrayBuffer) return;
+		if (_buffer instanceof ArrayBuffer) return;
 
-		this.moveCursorBy(buffer.length);
-		this.unitView.set(buffer, this.cursor - buffer.length);
+		this.moveCursorBy(_buffer.length);
+		this.unitView.set(_buffer, this.cursor - _buffer.length);
 	}
 	readBuffer(length: number) {
-		const data = this.buffer.slice(this.cursor, this.cursor + length);
+		const data = this._buffer.slice(this.cursor, this.cursor + length);
 		this.moveCursorBy(length);
 		return data;
 	}
@@ -226,7 +227,6 @@ export class Buffer {
 
 	writeBigInt64(val: bigint) {
 		this.check(val, "bigint64");
-
 		this.moveCursorBy(8);
 		this.view.setBigInt64(this.cursor - 8, val);
 	}

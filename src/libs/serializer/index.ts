@@ -1,19 +1,17 @@
 import { Buffer } from "../buffer";
 import { OutdatedError } from "../error/outdated";
 import { TypeMatchError } from "../error/type-match";
-import { t } from "../type/common";
 import { TCustomType, TYPE_SYMBOL } from "../type/custom-type";
 import {
-	TArraysTypes,
 	TCompiledSchema,
 	TConvertSchemaToType,
+	TConvertValueToType,
 	TSchema,
-	TSchemaObject,
 	TSerializerOptions,
 } from "./index.type";
 
-export class Serializer<T extends TSchemaObject> {
-	private compiledSchema: TCompiledSchema<TConvertSchemaToType<T>>;
+export class Serializer<T extends TSchema> {
+	private compiledSchema: TCompiledSchema<TConvertValueToType<T>>;
 
 	constructor(private type: T, private options?: TSerializerOptions) {
 		this.compiledSchema = this.compileSchema(type, options?.strict);
@@ -22,10 +20,7 @@ export class Serializer<T extends TSchemaObject> {
 	private static isCustomType(type: unknown): type is TCustomType {
 		return !!(typeof type === "object" && type && TYPE_SYMBOL in type);
 	}
-	private compileSchema(
-		schema: TSchemaObject | TArraysTypes | TCustomType,
-		strict?: boolean
-	): TCompiledSchema {
+	private compileSchema(schema: TSchema, strict?: boolean): TCompiledSchema {
 		if (Serializer.isCustomType(schema)) {
 			return {
 				decode: (buff) => schema.decode(buff),
@@ -104,14 +99,13 @@ export class Serializer<T extends TSchemaObject> {
 
 		if (this.options?.version) {
 			const buffVersion = buff.readString();
-			console.log(buffVersion, this.options);
 			if (buffVersion !== this.options.version) throw new OutdatedError(buffVersion, this.options.version);
 		}
 
 		return this.compiledSchema.decode(buff);
 	}
 
-	encode(obj: TConvertSchemaToType<T>, buff?: Buffer) {
+	encode(obj: TConvertValueToType<T>, buff?: Buffer) {
 		if (!buff) buff = new Buffer();
 		else buff.resetCursor();
 
@@ -126,22 +120,18 @@ export class Serializer<T extends TSchemaObject> {
 	static equal(schema1: TSchema, schema2: TSchema) {
 		const stack1: TSchema[] = [schema1];
 		const stack2: TSchema[] = [schema2];
-		console.log("start", stack1, stack2);
 
 		while (stack1.length) {
 			const el1 = stack1.pop();
 			const el2 = stack2.pop();
-			console.log("2", el1, el2);
 			if (el2 === undefined) return false;
 
 			if (Serializer.isCustomType(el1) && Serializer.isCustomType(el2)) {
-				console.log("3", el1, el2);
 				if (el1.name !== el2.name) return false;
 				continue;
 			}
 
 			if (Array.isArray(el1) && Array.isArray(el2)) {
-				console.log("4", el1, el2);
 				for (const item of el1) {
 					stack1.push(item);
 				}
@@ -152,7 +142,6 @@ export class Serializer<T extends TSchemaObject> {
 			}
 
 			if (typeof el1 === "object" && typeof el2 === "object") {
-				console.log("5", el1, el2);
 				for (const key in el1) {
 					stack1.push(el1[key as keyof typeof el1]);
 				}
@@ -161,7 +150,6 @@ export class Serializer<T extends TSchemaObject> {
 				}
 				continue;
 			}
-			console.log("6", el1, el2);
 			return false;
 		}
 		return stack2.length === 0;

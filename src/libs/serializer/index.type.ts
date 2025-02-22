@@ -9,7 +9,7 @@ export type TSchemaObject = {
 	[key in string]: TCustomType | TSchemaObject | TArraysTypes;
 };
 
-type TConvertValueToType<K extends TSchema> = K extends TSchemaObject
+export type TConvertValueToType<K extends TSchema> = K extends TSchemaObject
 	? TConvertSchemaToType<K>
 	: K extends TArraysTypes
 	? TConvertValueToType<K[number]>[]

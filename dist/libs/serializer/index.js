@@ -89,7 +89,6 @@ class Serializer {
         buff.resetCursor();
         if (this.options?.version) {
             const buffVersion = buff.readString();
-            console.log(buffVersion, this.options);
             if (buffVersion !== this.options.version)
                 throw new outdated_1.OutdatedError(buffVersion, this.options.version);
         }
@@ -109,21 +108,17 @@ class Serializer {
     static equal(schema1, schema2) {
         const stack1 = [schema1];
         const stack2 = [schema2];
-        console.log("start", stack1, stack2);
         while (stack1.length) {
             const el1 = stack1.pop();
             const el2 = stack2.pop();
-            console.log("2", el1, el2);
             if (el2 === undefined)
                 return false;
             if (Serializer.isCustomType(el1) && Serializer.isCustomType(el2)) {
-                console.log("3", el1, el2);
                 if (el1.name !== el2.name)
                     return false;
                 continue;
             }
             if (Array.isArray(el1) && Array.isArray(el2)) {
-                console.log("4", el1, el2);
                 for (const item of el1) {
                     stack1.push(item);
                 }
@@ -133,7 +128,6 @@ class Serializer {
                 continue;
             }
             if (typeof el1 === "object" && typeof el2 === "object") {
-                console.log("5", el1, el2);
                 for (const key in el1) {
                     stack1.push(el1[key]);
                 }
@@ -142,7 +136,6 @@ class Serializer {
                 }
                 continue;
             }
-            console.log("6", el1, el2);
             return false;
         }
         return stack2.length === 0;
