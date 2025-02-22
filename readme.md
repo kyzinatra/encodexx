@@ -2,10 +2,10 @@
 
 Primitive, flexible, fast, compact, and fully type-safe binary serializer for JavaScript.
 
-Visit [encodex.net](https://encodex.net) or install via:
+Visit [encodexx.net](https://encodexx.net) or install via:
 
 ```bash
-npm i encodex
+npm i encodexx
 ```
 
 Encodex uses a low-level JavaScript API for fast encoding and decoding.
@@ -15,7 +15,7 @@ Encodex uses a low-level JavaScript API for fast encoding and decoding.
 A schema describes the data structure for serialization. Keep in mind that the same schema structure is required for both serialization and deserialization.
 
 ```js
-import { Serializer, t } from "encodex";
+import { Serializer, t } from "encodexx";
 
 const schema = new Serializer({
 	name: t.str,
@@ -63,7 +63,7 @@ const decoded = schema.decode(buffer);
 In your schema, you can specify objects and arrays of any complexity. Use the built-in functions `t.or`, `t.enumerate`, `t.optional`, and other built-in types to create schemas:
 
 ```js
-import { Serializer, t } from "encodex";
+import { Serializer, t } from "encodexx";
 
 new Serializer({
 	name: t.or(t.str, t.none), // string | null
@@ -85,10 +85,10 @@ new Serializer({
 
 ## Custom Types
 
-You can create your own types and use them just like the built-in ones. Usually you won't need this, but there are cases when you want low-level `Buffer` access to write your data. See the [documentation](https://encodex.net/docs) for more details and examples.
+You can create your own types and use them just like the built-in ones. Usually you won't need this, but there are cases when you want low-level `Buffer` access to write your data. See the [documentation](https://encodexx.net/docs) for more details and examples.
 
 ```js
-import { customType } from "encodex";
+import { customType } from "encodexx";
 
 type TMyType = {
   name: string,
@@ -138,6 +138,6 @@ new Serializer(..., {
 
 ## Links
 
-- [Website](https://encodex.net)
-- [Documentation](https://encodex.net/docs)
+- [Website](https://encodexx.net)
+- [Documentation](https://encodexx.net/docs)
 - [Author](https://github.com/kyzinatra)
