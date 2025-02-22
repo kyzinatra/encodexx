@@ -1,6 +1,5 @@
 import { TCustomType } from "../type/custom-type";
 import { Buffer } from "../buffer";
-import { t } from "../type/common";
 
 export type TSchema = TCustomType | TSchemaObject | TArraysTypes;
 
