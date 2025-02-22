@@ -7,7 +7,7 @@ export const bool = customType({
 	encode(buffer, val) {
 		buffer.writeBoolean(val);
 	},
-	equal(data) {
+	guard(data) {
 		return typeof data === "boolean";
 	},
 	name: "boolean",

@@ -5,7 +5,7 @@ export const undef = customType({
 		return undefined;
 	},
 	encode() {},
-	equal(data) {
+	guard(data) {
 		return data === undefined;
 	},
 	name: "undef",

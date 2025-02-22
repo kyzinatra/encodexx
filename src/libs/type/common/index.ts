@@ -18,6 +18,7 @@ import { uint8 } from "./uint8";
 import { undef } from "./undef";
 import { sleb128 } from "./sleb128";
 import { enumerate } from "./enumerate";
+import { optional } from "./optional";
 
 export const t = {
 	/**
@@ -123,4 +124,9 @@ export const t = {
 	 * @example -12345n
 	 */
 	sleb128,
+	/**
+	 * @description Represents optional type
+	 * @example - field: t.optional(t.str) // field?: string;
+	 */
+	optional,
 };

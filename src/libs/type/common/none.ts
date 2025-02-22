@@ -5,7 +5,7 @@ export const none = customType({
 		return null;
 	},
 	encode() {},
-	equal(data) {
+	guard(data) {
 		return data === null;
 	},
 	name: "null",

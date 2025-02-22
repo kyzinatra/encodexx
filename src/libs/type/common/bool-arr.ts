@@ -32,7 +32,7 @@ export const boolArr = customType({
 
 		buffer.writeBuffer(arr);
 	},
-	equal(data) {
+	guard(data) {
 		return Array.isArray(data) && data.every((el) => typeof el === "boolean");
 	},
 	name: "boolArr",

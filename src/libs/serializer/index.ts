@@ -31,7 +31,7 @@ export class Serializer<T extends TSchemaObject> {
 				//? I don't wanna run if (strict) condition every time so made 2 types of functions
 				encode: strict
 					? (buff, obj) => {
-							if (!schema.equal(obj)) {
+							if (!schema.guard(obj)) {
 								throw new TypeMatchError(`schema ${schema.name} doesn't match ${obj}`);
 							}
 							schema.encode(buff, obj);
@@ -122,5 +122,5 @@ export class Serializer<T extends TSchemaObject> {
 		return buff;
 	}
 
-	isEqual<K extends TSchemaObject>(schema: TSchemaObject) {}
+	static equal(schema1: TSchemaObject, schema2: TSchemaObject) {}
 }

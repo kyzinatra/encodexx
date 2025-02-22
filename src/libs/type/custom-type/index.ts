@@ -6,7 +6,7 @@ export type TCustomType<K = any> = {
 	readonly name: string;
 	decode: (buffer: Buffer) => K;
 	encode: (buffer: Buffer, value: K) => unknown;
-	equal: (data: unknown) => data is K;
+	guard: (data: unknown) => data is K;
 	[TYPE_SYMBOL]: boolean;
 };
 

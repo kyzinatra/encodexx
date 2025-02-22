@@ -7,7 +7,7 @@ export const uleb128 = customType({
 	encode(buffer, val) {
 		buffer.writeUleb128(val);
 	},
-	equal(data): data is bigint {
+	guard(data): data is bigint {
 		return typeof data === "bigint" && data >= 0n;
 	},
 	name: "uleb128",

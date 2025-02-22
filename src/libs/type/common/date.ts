@@ -7,7 +7,7 @@ export const date = customType({
 	encode(buffer, val) {
 		buffer.writeDate(val);
 	},
-	equal(data) {
+	guard(data) {
 		return data instanceof Date;
 	},
 	name: "date",

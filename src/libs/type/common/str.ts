@@ -7,7 +7,7 @@ export const str = customType({
 	encode(buffer, val) {
 		buffer.writeString(val);
 	},
-	equal(data) {
+	guard(data) {
 		return typeof data === "string";
 	},
 	name: "str",

@@ -7,7 +7,7 @@ export const sleb128 = customType({
 	encode(buffer, val) {
 		buffer.writeSleb128(val);
 	},
-	equal(data) {
+	guard(data) {
 		return typeof data === "bigint";
 	},
 	name: "sleb128",

@@ -8,7 +8,7 @@ export const int32 = customType({
 	encode(buffer, val) {
 		buffer.writeInt32(val);
 	},
-	equal(data): data is number {
+	guard(data): data is number {
 		if (typeof data !== "number") return false;
 		test[0] = data;
 		return test[0] === data;

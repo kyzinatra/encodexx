@@ -19,7 +19,16 @@ type TConvertValueToType<K extends TSchema> = K extends TSchemaObject
 	: never;
 
 export type TConvertSchemaToType<T extends TSchemaObject> = {
-	[key in keyof T]: TConvertValueToType<T[key]>;
+	// strict fields
+	[key in keyof T as undefined extends TConvertValueToType<T[key]> ? never : key]: TConvertValueToType<
+		T[key]
+	>;
+} & {
+	// optional fields
+	[key in keyof T as undefined extends TConvertValueToType<T[key]> ? key : never]?: Exclude<
+		TConvertValueToType<T[key]>,
+		undefined
+	>;
 };
 
 export type TCompiledSchema<T = any> = {

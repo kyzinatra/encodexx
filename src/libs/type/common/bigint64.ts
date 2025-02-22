@@ -8,7 +8,7 @@ export const bigint64 = customType({
 	encode(buffer, val) {
 		buffer.writeBigInt64(val);
 	},
-	equal(data): data is bigint {
+	guard(data): data is bigint {
 		if (typeof data !== "bigint") return false;
 
 		test[0] = data;

@@ -13,7 +13,7 @@ export function enumerate<T extends string[]>(...strs: T) {
 			if (index === -1) throw new TypeMatchError(`Enum doesn't contain ${value}`);
 			buffer.writeUint16(index);
 		},
-		equal(data): data is T[number] {
+		guard(data): data is T[number] {
 			return strs.includes(String(data));
 		},
 		name: `Enum<${strs.join("|")}>`,

@@ -11,13 +11,13 @@ export function or<T extends TCustomType[]>(...types: T) {
 			return types[index].decode(buff);
 		},
 		encode(buffer, val) {
-			const typeIndex = types.findIndex((el) => el.equal(val));
+			const typeIndex = types.findIndex((el) => el.guard(val));
 			if (typeIndex === -1) throw new Error("No matching type found among the provided types");
 			buffer.writeUint8(typeIndex);
 			types[typeIndex].encode(buffer, val);
 		},
-		equal(data): data is ExtractCustomType<T[number]> {
-			return types.some((el) => el.equal(data));
+		guard(data): data is ExtractCustomType<T[number]> {
+			return types.some((el) => el.guard(data));
 		},
 		name: `Or<${types.map((el) => el.name).join("|")}>`,
 	});

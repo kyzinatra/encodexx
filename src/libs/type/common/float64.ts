@@ -7,7 +7,7 @@ export const float64 = customType({
 	encode(buffer, val) {
 		buffer.writeFloat64(val);
 	},
-	equal(data) {
+	guard(data) {
 		return typeof data === "number";
 	},
 	name: "float64",
