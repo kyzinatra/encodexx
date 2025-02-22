@@ -1,4 +1,4 @@
-# Encodex
+# Encodexx
 
 Primitive, flexible, fast, compact, and fully type-safe binary serializer for JavaScript.
 
@@ -8,7 +8,7 @@ Visit [encodexx.net](https://encodexx.net) or install via:
 npm i encodexx
 ```
 
-Encodex uses a low-level JavaScript API for fast encoding and decoding.
+Encodexx uses a low-level JavaScript API for fast encoding and decoding.
 
 ## Defining a Schema
 
