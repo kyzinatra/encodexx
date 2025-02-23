@@ -12,7 +12,7 @@ export declare class Buffer {
     get buffer(): ArrayBuffer;
     private textDecoder;
     private textEncoder;
-    constructor(size?: number);
+    constructor(newBuffer?: ArrayBuffer, size?: number);
     private check;
     get length(): number;
     writeBuffer(_buffer: ArrayBuffer | Uint8Array): void;

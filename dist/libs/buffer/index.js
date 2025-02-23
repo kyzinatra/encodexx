@@ -33,13 +33,13 @@ class Buffer {
     get buffer() {
         return this._buffer.slice(0, this.end);
     }
-    constructor(size = KB) {
+    constructor(newBuffer, size = KB) {
         this.size = size;
         this._cursor = 0;
         this.end = 0;
         this.textDecoder = new TextDecoder();
         this.textEncoder = new TextEncoder();
-        this._buffer = new ArrayBuffer(size);
+        this._buffer = newBuffer ? newBuffer : new ArrayBuffer(size);
         this.view = new DataView(this._buffer);
         this.unitView = new Uint8Array(this._buffer);
     }
