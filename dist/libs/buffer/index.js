@@ -31,7 +31,7 @@ class Buffer {
         this.cursor += n;
     }
     get buffer() {
-        return this._buffer;
+        return this._buffer.slice(0, this.end);
     }
     constructor(size = KB) {
         this.size = size;
