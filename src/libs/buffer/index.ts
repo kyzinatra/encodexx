@@ -44,8 +44,8 @@ export class Buffer {
 	private textDecoder = new TextDecoder();
 	private textEncoder = new TextEncoder();
 
-	constructor(private size = KB) {
-		this._buffer = new ArrayBuffer(size);
+	constructor(newBuffer?: ArrayBuffer, private size = KB) {
+		this._buffer = newBuffer ? newBuffer : new ArrayBuffer(size);
 		this.view = new DataView(this._buffer);
 		this.unitView = new Uint8Array(this._buffer);
 	}
