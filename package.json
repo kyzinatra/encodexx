@@ -10,7 +10,13 @@
 		"dev": "tsx ./src/index.ts",
 		"test": "jest"
 	},
-	"keywords": [],
+	"keywords": [
+		"serialization",
+		"binary serialization",
+		"encodexx",
+		"protobuf",
+		"buffer"
+	],
 	"author": "kyzinatra <main@kyzinatra.ru>",
 	"license": "ISC",
 	"type": "commonjs",
