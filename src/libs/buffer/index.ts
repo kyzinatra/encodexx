@@ -38,7 +38,7 @@ export class Buffer {
 	private unitView: Uint8Array;
 
 	get buffer() {
-		return this._buffer;
+		return this._buffer.slice(0, this.end);
 	}
 
 	private textDecoder = new TextDecoder();
