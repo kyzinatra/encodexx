@@ -1,10 +1,20 @@
-# Encodexx
+<p align="center">
+  <img src="https://raw.githubusercontent.com/kyzinatra/encodexx/master/public/logo.svg" alt="logo" width="200px" />
+  <h1 align="center">Encodexx</h1>
+</p>
 
-<img src="https://raw.githubusercontent.com/kyzinatra/encodexx/master/public/logo.svg" alt="logo" width="200"/>
+# What is Encodexx
 
 Primitive, flexible, fast, compact, and fully type-safe binary serializer for JavaScript.
 
-Visit [encodexx.net](https://encodexx.net) or install via:
+Encodexx is designed to be as developer-friendly as possible. No unnecessary files or duplicate type declarations in TypeScript. Its highly flexible architecture allows to describe any data and serialize it as quickly and compactly as possible to maximize the speed of your interface.
+
+- Zero dependencies
+- 3.6 KB bundle
+- Works in both the browser and Node.js
+- Extensive customization options
+
+  Visit [encodexx.net](https://encodexx.net) or install via:
 
 ```bash
 npm i encodexx
