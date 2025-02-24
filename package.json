@@ -1,6 +1,6 @@
 {
 	"name": "encodexx",
-	"version": "1.6.4",
+	"version": "1.6.5",
 	"description": "This package is designed for convenient and flexible serialization of JavaScript objects.",
 	"main": "dist/index.js",
 	"module": "dist/index.js",
