@@ -18,7 +18,7 @@
 		"buffer"
 	],
 	"author": "kyzinatra <main@kyzinatra.ru>",
-	"license": "ISC",
+	"license": "MIT",
 	"type": "commonjs",
 	"devDependencies": {
 		"@jest/globals": "^29.7.0",
