@@ -13,6 +13,7 @@ Encodexx is designed to be as developer-friendly as possible. No unnecessary fil
 - 3.6 KB bundle
 - Works in both the browser and Node.js
 - Extensive customization options
+- Uses a low-level JavaScript API for fast encoding and decoding
 
   Visit [encodexx.net](https://encodexx.net) or install via:
 
@@ -21,8 +22,6 @@ npm i encodexx
 ```
 
 [![Build Size](https://img.shields.io/bundlephobia/minzip/encodexx?label=bundle%20size&style=flat&colorA=000000&colorB=000000)](https://bundlephobia.com/result?p=encodexx)
-
-Encodexx uses a low-level JavaScript API for fast encoding and decoding.
 
 [Demo on codesanbox](https://codesandbox.io/p/sandbox/gd4jhj)
 
