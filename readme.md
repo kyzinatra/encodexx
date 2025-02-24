@@ -1,5 +1,7 @@
 # Encodexx
 
+![image](./public//logo.png)
+
 Primitive, flexible, fast, compact, and fully type-safe binary serializer for JavaScript.
 
 Visit [encodexx.net](https://encodexx.net) or install via:
@@ -95,28 +97,28 @@ You can create your own types and use them just like the built-in ones. Usually 
 import { customType } from "encodexx";
 
 type TMyType = {
-  name: string,
-  age: number
-}
+	name: string;
+	age: number;
+};
 
 const myType = customType<TMyType>({
-  decode(buffer) {
-    return {
-      name: buffer.readString(),
-      age: buffer.readUint8()
-    };
-  },
-  encode(buffer, val) {
-    buffer.writeString(val.name);
-    buffer.writeUint8(val.age);
-  },
-  guard(data): data is TMyType {
-    if (typeof data !== "object" || !data) return false;
-    if (!("name" in data) || typeof data.name !== "string") return false;
-    if (!("age" in data) || typeof data.age !== "number") return false;
-    return true;
-  },
-  name: "mytype"
+	decode(buffer) {
+		return {
+			name: buffer.readString(),
+			age: buffer.readUint8(),
+		};
+	},
+	encode(buffer, val) {
+		buffer.writeString(val.name);
+		buffer.writeUint8(val.age);
+	},
+	guard(data): data is TMyType {
+		if (typeof data !== "object" || !data) return false;
+		if (!("name" in data) || typeof data.name !== "string") return false;
+		if (!("age" in data) || typeof data.age !== "number") return false;
+		return true;
+	},
+	name: "mytype",
 });
 ```
 
