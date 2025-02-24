@@ -1,6 +1,6 @@
 # Encodexx
 
-![image](./public//logo.png)
+<img src="./public/logo.svg" alt="logo" width="200"/>
 
 Primitive, flexible, fast, compact, and fully type-safe binary serializer for JavaScript.
 
