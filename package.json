@@ -20,6 +20,9 @@
 	"author": "kyzinatra <main@kyzinatra.ru>",
 	"license": "MIT",
 	"type": "commonjs",
+	"sideEffects": false,
+	"homepage": "https://github.com/kyzinatra/encodexx",
+	"repository": "https://github.com/kyzinatra/encodexx",
 	"devDependencies": {
 		"@jest/globals": "^29.7.0",
 		"@types/jest": "^29.5.14",
