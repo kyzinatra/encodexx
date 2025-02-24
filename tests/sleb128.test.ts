@@ -69,7 +69,7 @@ describe("t.sleb128 type", () => {
 	it("should handle an array of sleb128 values correctly", () => {
 		const serializer = new Serializer({ values: [t.sleb128] });
 		const original = {
-			values: [0n, 1n, -1n, 127n, -128n, 30000n, -30000n, 1n << 50n, -(1n << 50n)],
+			values: [0n, 1n, -1n, 127n, -128n, 30000n, -30000n, 1n << 50n, -(1n << 50000n)],
 		};
 		const encoded = serializer.encode(original);
 		const decoded = serializer.decode(encoded);

@@ -13,7 +13,7 @@ describe("t.uleb128 type", () => {
 	it("should serialize and deserialize small positive number correctly", () => {
 		const schema = { value: t.uleb128 };
 		const serializer = new Serializer(schema);
-		const original = { value: 12345n };
+		const original = { value: 1n << 50000n };
 		const encoded = serializer.encode(original);
 		const decoded = serializer.decode(encoded);
 		expect(decoded.value).toBe(original.value);

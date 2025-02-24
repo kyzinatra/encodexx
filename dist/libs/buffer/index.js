@@ -7,7 +7,7 @@ const KB = 1024;
 class Buffer {
     set cursor(n) {
         //? rsize
-        if (n > this.size) {
+        if (n >= this.size) {
             this.size = n > this.size * 2 ? n + KB : this.size * 2;
             const newBuffer = new ArrayBuffer(this.size);
             const newUnitView = new Uint8Array(newBuffer);
@@ -67,16 +67,19 @@ class Buffer {
     }
     writeUleb128(value) {
         while (value > 0x7fn) {
-            this.unitView[this.cursor++] = Number((value & 0x7fn) | 128n);
+            this.unitView[this.cursor] = Number((value & 0x7fn) | 128n);
+            this.cursor++;
             value >>= 7n;
         }
-        this.unitView[this.cursor++] = Number(value & 0x7fn);
+        this.unitView[this.cursor] = Number(value & 0x7fn);
+        this.cursor++;
     }
     readUleb128() {
         let result = 0n;
         let shift = 0;
         while (true) {
-            const byte = this.unitView[this.cursor++];
+            const byte = this.unitView[this.cursor];
+            this.cursor++;
             result |= BigInt(byte & 0x7f) << BigInt(shift);
             shift += 7;
             if ((byte & 0b10000000) === 0) {
@@ -94,7 +97,8 @@ class Buffer {
             if (!done) {
                 currentByte |= 0x80; //  continue bit
             }
-            this.unitView[this.cursor++] = currentByte;
+            this.unitView[this.cursor] = currentByte;
+            this.cursor++;
             if (done) {
                 break;
             }
@@ -104,7 +108,8 @@ class Buffer {
         let result = 0n;
         let shift = 0n;
         while (true) {
-            const byte = this.unitView[this.cursor++];
+            const byte = this.unitView[this.cursor];
+            this.cursor++;
             result |= BigInt(byte & 0x7f) << shift;
             shift += 7n;
             if ((byte & 0x80) === 0) {

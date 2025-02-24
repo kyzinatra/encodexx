@@ -10,10 +10,7 @@ exports.float32 = (0, custom_type_1.customType)({
         buffer.writeFloat32(val);
     },
     guard(data) {
-        if (typeof data !== "number")
-            return false;
-        const rounded = Math.round(data * 1e7) / 1e7;
-        return Math.abs(data - rounded) < Number.EPSILON;
+        return typeof data === "number";
     },
     name: "float32",
 });
