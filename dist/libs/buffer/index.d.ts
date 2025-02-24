@@ -10,11 +10,11 @@ export declare class Buffer {
     private view;
     private unitView;
     get buffer(): ArrayBuffer;
+    get length(): number;
     private textDecoder;
     private textEncoder;
     constructor(newBuffer?: ArrayBuffer, size?: number);
     private check;
-    get length(): number;
     writeBuffer(_buffer: ArrayBuffer | Uint8Array): void;
     readBuffer(length: number): ArrayBuffer;
     writeUleb128(value: bigint): void;

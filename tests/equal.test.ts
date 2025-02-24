@@ -181,7 +181,7 @@ describe("Serializer.equal", () => {
 		expect(Serializer.equal(schema1, schema2)).toBe(false);
 	});
 
-	it("should return false if key order is different but types match", () => {
+	it("should return true if key order is different but types match", () => {
 		const schema1 = {
 			a: t.int8,
 			b: t.int16,
@@ -191,7 +191,7 @@ describe("Serializer.equal", () => {
 			a: t.int8,
 		};
 
-		expect(Serializer.equal(schema1, schema2)).toBe(false);
+		expect(Serializer.equal(schema1, schema2)).toBe(true);
 	});
 
 	it("should return true for the same custom types", () => {

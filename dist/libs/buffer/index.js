@@ -33,6 +33,9 @@ class Buffer {
     get buffer() {
         return this._buffer.slice(0, this.end);
     }
+    get length() {
+        return this.end;
+    }
     constructor(newBuffer, size = KB) {
         this.size = size;
         this._cursor = 0;
@@ -46,9 +49,6 @@ class Buffer {
     check(val, type) {
         if (val < types_1.TYPES_RANGES[type][0] || val > types_1.TYPES_RANGES[type][1])
             throw new out_of_range_1.OutOfRangeError(type, val);
-    }
-    get length() {
-        return this.end;
     }
     writeBuffer(_buffer) {
         if (_buffer instanceof ArrayBuffer) {

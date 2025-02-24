@@ -60,7 +60,9 @@ class Serializer {
                 },
             };
         }
-        const entries = Object.keys(schema).map((key) => {
+        const entries = Object.keys(schema)
+            .sort()
+            .map((key) => {
             const compiledChild = this.compileSchema(schema[key], strict);
             return {
                 key,
@@ -128,10 +130,12 @@ class Serializer {
                 continue;
             }
             if (typeof el1 === "object" && typeof el2 === "object") {
-                for (const key in el1) {
+                const keys1 = Object.keys(el1).sort();
+                const keys2 = Object.keys(el2).sort();
+                for (const key of keys1) {
                     stack1.push(el1[key]);
                 }
-                for (const key in el2) {
+                for (const key of keys2) {
                     stack2.push(el2[key]);
                 }
                 continue;

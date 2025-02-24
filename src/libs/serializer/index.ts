@@ -68,14 +68,17 @@ export class Serializer<T extends TSchema> {
 			};
 		}
 
-		const entries = Object.keys(schema).map((key) => {
-			const compiledChild = this.compileSchema(schema[key], strict);
-			return {
-				key,
-				encode: compiledChild.encode,
-				decode: compiledChild.decode,
-			};
-		});
+		const entries = Object.keys(schema)
+			.sort()
+			.map((key) => {
+				const compiledChild = this.compileSchema(schema[key], strict);
+				return {
+					key,
+					encode: compiledChild.encode,
+					decode: compiledChild.decode,
+				};
+			});
+
 		return {
 			encode(buff, obj: Record<string, any>) {
 				for (let i = 0; i < entries.length; i++) {
@@ -142,10 +145,12 @@ export class Serializer<T extends TSchema> {
 			}
 
 			if (typeof el1 === "object" && typeof el2 === "object") {
-				for (const key in el1) {
+				const keys1 = Object.keys(el1).sort();
+				const keys2 = Object.keys(el2).sort();
+				for (const key of keys1) {
 					stack1.push(el1[key as keyof typeof el1]);
 				}
-				for (const key in el2) {
+				for (const key of keys2) {
 					stack2.push(el2[key as keyof typeof el2]);
 				}
 				continue;

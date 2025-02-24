@@ -40,6 +40,9 @@ export class Buffer {
 	get buffer() {
 		return this._buffer.slice(0, this.end);
 	}
+	get length() {
+		return this.end;
+	}
 
 	private textDecoder = new TextDecoder();
 	private textEncoder = new TextEncoder();
@@ -52,10 +55,6 @@ export class Buffer {
 
 	private check(val: number | bigint, type: keyof TNumberTypes) {
 		if (val < TYPES_RANGES[type][0] || val > TYPES_RANGES[type][1]) throw new OutOfRangeError(type, val);
-	}
-
-	get length() {
-		return this.end;
 	}
 
 	writeBuffer(_buffer: ArrayBuffer | Uint8Array) {
