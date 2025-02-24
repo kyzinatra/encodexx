@@ -7,10 +7,8 @@ export const float32 = customType({
 	encode(buffer, val) {
 		buffer.writeFloat32(val);
 	},
-	guard(data): data is number {
-		if (typeof data !== "number") return false;
-		const rounded = Math.round(data * 1e7) / 1e7;
-		return Math.abs(data - rounded) < Number.EPSILON;
+	guard(data) {
+		return typeof data === "number";
 	},
 	name: "float32",
 });
