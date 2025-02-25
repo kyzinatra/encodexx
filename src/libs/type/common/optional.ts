@@ -1,23 +1,24 @@
-import { TSchema } from "../../serializer/index.type";
-import { OPTIONAL_SYMBOL, TCustomType, TYPE_SYMBOL } from "../custom-type";
-import { or } from "./or";
-import { undef } from "./undef";
+import { Serializer } from "../../serializer";
+import { TConvertValueToType, TSchema } from "../../serializer/index.type";
+import { customType } from "../custom-type";
 
-export type TOptionalSchema<T extends TSchema = TSchema> = {
-	data: T;
-	[OPTIONAL_SYMBOL]: true;
-};
-
-type TOptionalType<T extends TCustomType | TSchema> = T extends TCustomType<infer R>
-	? TCustomType<R | undefined>
-	: TOptionalSchema<T>;
-export function optional<T extends TCustomType | TSchema>(type: T): TOptionalType<T> {
-	if (TYPE_SYMBOL in type) {
-		return or(type, undef) as TOptionalType<T>;
-	}
-
-	return {
-		data: type,
-		[OPTIONAL_SYMBOL]: true,
-	} as TOptionalType<T>;
+export function optional<T extends TSchema>(type: T) {
+	const ser = new Serializer(type, { resetCursor: false });
+	type TOptional = TConvertValueToType<T> | undefined;
+	return customType<TOptional>({
+		decode(buffer) {
+			if (buffer.readBoolean()) return;
+			return ser.decode(buffer);
+		},
+		encode(value, buffer) {
+			if (value === undefined) return buffer.writeBoolean(true);
+			buffer.writeBoolean(false);
+			return ser.encode(value, buffer);
+		},
+		guard(data): data is TOptional {
+			if (data === undefined) return true;
+			return ser.guard(data);
+		},
+		name: `Optional${ser.name}`,
+	});
 }

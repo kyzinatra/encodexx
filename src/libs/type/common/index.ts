@@ -19,6 +19,7 @@ import { undef } from "./undef";
 import { sleb128 } from "./sleb128";
 import { enumerate } from "./enumerate";
 import { optional } from "./optional";
+import { schema } from "./schema";
 
 export const t = {
 	/**
@@ -31,6 +32,11 @@ export const t = {
 	 * @example t.enumerate("CREATE", "READ", "UPDATE", "DELETE")
 	 */
 	enumerate,
+	/**
+	 *@description Convert any schema to type. Be careful, it may hurts performance!
+	 * @example t.or(t.schema([t.bool]), t.schema([t.int8]))
+	 */
+	schema,
 	/**
 	 * @description Represents an 8-bit unsigned integer. This type supports values ranging from 0 to 255.
 	 * @example 200

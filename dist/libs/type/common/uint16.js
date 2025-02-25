@@ -7,7 +7,7 @@ exports.uint16 = (0, custom_type_1.customType)({
     decode(buff) {
         return buff.readUint16();
     },
-    encode(buffer, val) {
+    encode(val, buffer) {
         buffer.writeUint16(val);
     },
     guard(data) {

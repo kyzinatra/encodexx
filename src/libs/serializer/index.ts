@@ -1,70 +1,55 @@
 import { Buffer } from "../buffer";
 import { OutdatedError } from "../error/outdated";
 import { TypeMatchError } from "../error/type-match";
-import { TOptionalSchema } from "../type/common/optional";
-import { OPTIONAL_SYMBOL, TCustomType, TYPE_SYMBOL } from "../type/custom-type";
-import {
-	TCompiledSchema,
-	TConvertSchemaToType,
-	TConvertValueToType,
-	TSchema,
-	TSerializerOptions,
-} from "./index.type";
+import { TCustomType, TYPE_SYMBOL } from "../type/custom-type";
+import { TCompiledSchema, TConvertValueToType, TSchema, TSerializerOptions } from "./index.type";
 
+const textEncoder = new TextEncoder();
 export class Serializer<T extends TSchema> {
 	private compiledSchema: TCompiledSchema<TConvertValueToType<T>>;
 
-	constructor(type: T, private options?: TSerializerOptions) {
+	constructor(type: T, private options: TSerializerOptions = {}) {
+		this.options.resetCursor = options?.resetCursor !== false;
 		this.compiledSchema = this.compileSchema(type, options?.strict);
 	}
-
 	private static isCustomType(type: unknown): type is TCustomType {
 		return !!(typeof type === "object" && type && TYPE_SYMBOL in type);
 	}
-	private static isOptionalType(type: unknown): type is TOptionalSchema {
-		return !!(typeof type === "object" && type && OPTIONAL_SYMBOL in type);
-	}
-	private compileSchema(schema: TSchema, strict?: boolean, isOptional = false): TCompiledSchema {
-		if (Serializer.isOptionalType(schema)) {
-			return this.compileSchema(schema.data, strict, true);
-		}
+	private compileSchema(schema: TSchema, strict?: boolean): TCompiledSchema {
 		if (Serializer.isCustomType(schema)) {
+			this.name = schema.name;
 			return {
 				decode: (buff) => schema.decode(buff),
 				//? I don't wanna run if (strict) condition every time so made 2 functions
 				encode: strict
-					? (buff, obj) => {
+					? (obj, buff) => {
 							if (!schema.guard(obj)) {
 								throw new TypeMatchError(`schema ${schema.name} doesn't match ${obj}`);
 							}
-							schema.encode(buff, obj);
+							schema.encode(obj, buff);
 					  }
-					: (buff, obj) => schema.encode(buff, obj),
+					: (obj, buff) => {
+							schema.encode(obj, buff);
+					  },
+				guard: (val) => schema.guard(val),
 			};
 		}
 
 		if (Array.isArray(schema)) {
 			const compiledItem = this.compileSchema(schema[0], strict);
+			this.name = `arr`;
 			return {
-				encode: (buff, arr: any[]) => {
-					if (isOptional && arr === undefined) {
-						buff.writeBoolean(true);
-						return;
-					}
+				encode: (arr: any[], buff) => {
 					if (strict && !Array.isArray(arr)) {
 						throw new TypeMatchError(`array schema doesn't match ${arr}`);
 					}
 					const len = arr.length;
-					isOptional && buff.writeBoolean(false);
 					buff.writeUint32(len);
 					for (let i = 0; i < len; i++) {
-						compiledItem.encode(buff, arr[i]);
+						compiledItem.encode(arr[i], buff);
 					}
 				},
 				decode(buff) {
-					if (isOptional && buff.readBoolean()) {
-						return;
-					}
 					const len = buff.readUint32();
 					const result = new Array(len);
 					for (let i = 0; i < len; i++) {
@@ -72,35 +57,41 @@ export class Serializer<T extends TSchema> {
 					}
 					return result;
 				},
+				guard(val): val is any {
+					if (!Array.isArray(val)) {
+						return false;
+					}
+					const len = val.length;
+					for (let i = 0; i < len; i++) {
+						if (!compiledItem.guard(val[i])) return false;
+					}
+					return true;
+				},
 			};
 		}
 
 		const entries = Object.keys(schema)
 			.sort()
 			.map((key) => {
+				this.name = key;
 				const compiledChild = this.compileSchema(schema[key], strict);
 				return {
 					key,
 					encode: compiledChild.encode,
 					decode: compiledChild.decode,
+					guard: compiledChild.guard,
 				};
 			});
 
 		return {
-			encode(buff, obj: Record<string, any>) {
-				if (isOptional && obj === undefined) {
-					buff.writeBoolean(true);
-					return;
-				}
-				isOptional && buff.writeBoolean(false);
+			encode(obj: Record<string, any>, buff) {
 				for (let i = 0; i < entries.length; i++) {
 					const { key, encode } = entries[i];
-					encode(buff, obj[key]);
+
+					encode(obj[key], buff);
 				}
 			},
 			decode(buff) {
-				if (isOptional && buff.readBoolean()) return;
-
 				const obj: Record<string, any> = {};
 				for (let i = 0; i < entries.length; i++) {
 					const { key, decode } = entries[i];
@@ -108,11 +99,19 @@ export class Serializer<T extends TSchema> {
 				}
 				return obj;
 			},
+			guard(val): val is any {
+				if (!val || typeof val !== "object") return false;
+				for (let i = 0; i < entries.length; i++) {
+					const { key, guard } = entries[i];
+					if (!guard(val[key as keyof typeof val])) return false;
+				}
+				return true;
+			},
 		};
 	}
 
 	decode(buff: Buffer) {
-		buff.resetCursor();
+		if (this.options?.resetCursor) buff.resetCursor();
 
 		if (this.options?.version) {
 			const buffVersion = buff.readString();
@@ -124,16 +123,26 @@ export class Serializer<T extends TSchema> {
 
 	encode(obj: TConvertValueToType<T>, buff?: Buffer) {
 		if (!buff) buff = new Buffer();
-		else buff.resetCursor();
+		else if (this.options?.resetCursor) buff.resetCursor();
 
 		if (this.options?.version) {
 			buff.writeString(this.options.version);
 		}
-
-		this.compiledSchema.encode(buff, obj);
+		this.compiledSchema.encode(obj, buff);
 		return buff;
 	}
 
+	guard(val: unknown): val is TConvertValueToType<T> {
+		return this.compiledSchema.guard(val);
+	}
+
+	private _name = 0;
+	get name() {
+		return String(this._name);
+	}
+	private set name(s: string) {
+		this._name = (this._name + textEncoder.encode(s).reduce((a, l) => a + l)) % (1 << 30);
+	}
 	static equal(schema1: TSchema, schema2: TSchema) {
 		const stack1: TSchema[] = [schema1];
 		const stack2: TSchema[] = [schema2];

@@ -10,16 +10,16 @@ function or(...types) {
             const index = buff.readUint8();
             return types[index].decode(buff);
         },
-        encode(buffer, val) {
+        encode(val, buffer) {
             const typeIndex = types.findIndex((el) => el.guard(val));
             if (typeIndex === -1)
                 throw new Error("No matching type found among the provided types");
             buffer.writeUint8(typeIndex);
-            types[typeIndex].encode(buffer, val);
+            types[typeIndex].encode(val, buffer);
         },
         guard(data) {
             return types.some((el) => el.guard(data));
         },
-        name: `Or<${types.map((el) => el.name).join("|")}>`,
+        name: `Or<${types.map((el, i) => el.name).join("|")}>`,
     });
 }

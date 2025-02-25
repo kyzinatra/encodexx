@@ -57,22 +57,22 @@ describe("Serializer.equal", () => {
 
 	it("should return true for two schemas with identical nested objects", () => {
 		const schema1 = {
-			obj: {
+			obj: t.optional({
 				a: t.int8,
 				b: t.int16,
 				nested: {
 					c: t.uint8,
 				},
-			},
+			}),
 		};
 		const schema2 = {
-			obj: {
+			obj: t.optional({
 				a: t.int8,
 				b: t.int16,
 				nested: {
 					c: t.uint8,
 				},
-			},
+			}),
 		};
 
 		expect(Serializer.equal(schema1, schema2)).toBe(true);
@@ -199,7 +199,7 @@ describe("Serializer.equal", () => {
 			decode(buff) {
 				return buff.readFloat64();
 			},
-			encode(buffer, val) {
+			encode(val, buffer) {
 				buffer.writeFloat64(val);
 			},
 			guard(data): data is number {
@@ -220,7 +220,7 @@ describe("Serializer.equal", () => {
 			decode(buff) {
 				return buff.readFloat64();
 			},
-			encode(buffer, val) {
+			encode(val, buffer) {
 				buffer.writeFloat64(val);
 			},
 			guard(data): data is number {
@@ -232,7 +232,7 @@ describe("Serializer.equal", () => {
 			decode(buff) {
 				return buff.readFloat64();
 			},
-			encode(buffer, val) {
+			encode(val, buffer) {
 				buffer.writeFloat64(val);
 			},
 			guard(data): data is number {

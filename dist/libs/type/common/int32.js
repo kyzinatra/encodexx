@@ -7,7 +7,7 @@ exports.int32 = (0, custom_type_1.customType)({
     decode(buff) {
         return buff.readInt32();
     },
-    encode(buffer, val) {
+    encode(val, buffer) {
         buffer.writeInt32(val);
     },
     guard(data) {

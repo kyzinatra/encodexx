@@ -5,7 +5,7 @@ export const int8 = customType({
 	decode(buff) {
 		return buff.readInt8();
 	},
-	encode(buffer, val) {
+	encode(val, buffer) {
 		buffer.writeInt8(val);
 	},
 	guard(data): data is number {

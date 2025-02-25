@@ -119,18 +119,23 @@ describe("Invalid Data Tests", () => {
 	});
 
 	it("should throw an error if a union type does not match any of the provided schemas", () => {
-		//@ts-expect-error
-		const schema = { item: t.or({ type: t.str, value: t.int32 }, { name: t.str, count: t.int32 }) };
+		const schema = {
+			item: t.or(t.schema({ type: t.str, value: t.int32 }), t.schema({ name: t.str, count: t.int32 })),
+		};
 		const serializer = new Serializer(schema);
+		//@ts-expect-error
 		expect(() => serializer.encode({ item: { type: "test", count: 10 } })).toThrow();
 	});
 
 	it("should throw an error if a nested union type object is missing required fields", () => {
 		const schema = {
-			//@ts-expect-error
-			details: t.or({ title: t.str, description: t.str }, { code: t.int32, message: t.str }),
+			details: t.or(
+				t.schema({ title: t.str, description: t.str }),
+				t.schema({ code: t.int32, message: t.str })
+			),
 		};
 		const serializer = new Serializer(schema);
+		//@ts-expect-error
 		expect(() => serializer.encode({ details: { title: "Hello" } })).toThrow();
 	});
 

@@ -6,7 +6,7 @@ exports.sleb128 = (0, custom_type_1.customType)({
     decode(buff) {
         return buff.readSleb128();
     },
-    encode(buffer, val) {
+    encode(val, buffer) {
         buffer.writeSleb128(val);
     },
     guard(data) {

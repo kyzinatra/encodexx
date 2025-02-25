@@ -12,7 +12,7 @@ const myType = customType<TMyType>({
 			age: buffer.readUint8(),
 		};
 	},
-	encode(buffer, val) {
+	encode(val, buffer) {
 		buffer.writeString(val.name);
 		buffer.writeUint8(val.age);
 	},

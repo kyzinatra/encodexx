@@ -4,7 +4,7 @@ export const uleb128 = customType({
 	decode(buff) {
 		return buff.readUleb128();
 	},
-	encode(buffer, val) {
+	encode(val, buffer) {
 		buffer.writeUleb128(val);
 	},
 	guard(data): data is bigint {

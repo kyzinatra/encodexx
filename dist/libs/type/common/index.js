@@ -22,6 +22,7 @@ const undef_1 = require("./undef");
 const sleb128_1 = require("./sleb128");
 const enumerate_1 = require("./enumerate");
 const optional_1 = require("./optional");
+const schema_1 = require("./schema");
 exports.t = {
     /**
      * @description Implementation of a union type. Use this when you need to assign two or more different types to a field.
@@ -33,6 +34,11 @@ exports.t = {
      * @example t.enumerate("CREATE", "READ", "UPDATE", "DELETE")
      */
     enumerate: enumerate_1.enumerate,
+    /**
+     *@description Convert any schema to type. Be careful, it may hurts performance!
+     * @example t.or(t.schema([t.bool]), t.schema([t.int8]))
+     */
+    schema: schema_1.schema,
     /**
      * @description Represents an 8-bit unsigned integer. This type supports values ranging from 0 to 255.
      * @example 200

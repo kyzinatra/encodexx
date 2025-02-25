@@ -5,57 +5,51 @@ const buffer_1 = require("../buffer");
 const outdated_1 = require("../error/outdated");
 const type_match_1 = require("../error/type-match");
 const custom_type_1 = require("../type/custom-type");
+const textEncoder = new TextEncoder();
 class Serializer {
-    constructor(type, options) {
+    constructor(type, options = {}) {
         this.options = options;
+        this._name = 0;
+        this.options.resetCursor = options?.resetCursor !== false;
         this.compiledSchema = this.compileSchema(type, options?.strict);
     }
     static isCustomType(type) {
         return !!(typeof type === "object" && type && custom_type_1.TYPE_SYMBOL in type);
     }
-    static isOptionalType(type) {
-        return !!(typeof type === "object" && type && custom_type_1.OPTIONAL_SYMBOL in type);
-    }
-    compileSchema(schema, strict, isOptional = false) {
-        if (Serializer.isOptionalType(schema)) {
-            return this.compileSchema(schema.data, strict, true);
-        }
+    compileSchema(schema, strict) {
         if (Serializer.isCustomType(schema)) {
+            this.name = schema.name;
             return {
                 decode: (buff) => schema.decode(buff),
                 //? I don't wanna run if (strict) condition every time so made 2 functions
                 encode: strict
-                    ? (buff, obj) => {
+                    ? (obj, buff) => {
                         if (!schema.guard(obj)) {
                             throw new type_match_1.TypeMatchError(`schema ${schema.name} doesn't match ${obj}`);
                         }
-                        schema.encode(buff, obj);
+                        schema.encode(obj, buff);
                     }
-                    : (buff, obj) => schema.encode(buff, obj),
+                    : (obj, buff) => {
+                        schema.encode(obj, buff);
+                    },
+                guard: (val) => schema.guard(val),
             };
         }
         if (Array.isArray(schema)) {
             const compiledItem = this.compileSchema(schema[0], strict);
+            this.name = `arr`;
             return {
-                encode: (buff, arr) => {
-                    if (isOptional && arr === undefined) {
-                        buff.writeBoolean(true);
-                        return;
-                    }
+                encode: (arr, buff) => {
                     if (strict && !Array.isArray(arr)) {
                         throw new type_match_1.TypeMatchError(`array schema doesn't match ${arr}`);
                     }
                     const len = arr.length;
-                    isOptional && buff.writeBoolean(false);
                     buff.writeUint32(len);
                     for (let i = 0; i < len; i++) {
-                        compiledItem.encode(buff, arr[i]);
+                        compiledItem.encode(arr[i], buff);
                     }
                 },
                 decode(buff) {
-                    if (isOptional && buff.readBoolean()) {
-                        return;
-                    }
                     const len = buff.readUint32();
                     const result = new Array(len);
                     for (let i = 0; i < len; i++) {
@@ -63,33 +57,39 @@ class Serializer {
                     }
                     return result;
                 },
+                guard(val) {
+                    if (!Array.isArray(val)) {
+                        return false;
+                    }
+                    const len = val.length;
+                    for (let i = 0; i < len; i++) {
+                        if (!compiledItem.guard(val[i]))
+                            return false;
+                    }
+                    return true;
+                },
             };
         }
         const entries = Object.keys(schema)
             .sort()
             .map((key) => {
+            this.name = key;
             const compiledChild = this.compileSchema(schema[key], strict);
             return {
                 key,
                 encode: compiledChild.encode,
                 decode: compiledChild.decode,
+                guard: compiledChild.guard,
             };
         });
         return {
-            encode(buff, obj) {
-                if (isOptional && obj === undefined) {
-                    buff.writeBoolean(true);
-                    return;
-                }
-                isOptional && buff.writeBoolean(false);
+            encode(obj, buff) {
                 for (let i = 0; i < entries.length; i++) {
                     const { key, encode } = entries[i];
-                    encode(buff, obj[key]);
+                    encode(obj[key], buff);
                 }
             },
             decode(buff) {
-                if (isOptional && buff.readBoolean())
-                    return;
                 const obj = {};
                 for (let i = 0; i < entries.length; i++) {
                     const { key, decode } = entries[i];
@@ -97,10 +97,21 @@ class Serializer {
                 }
                 return obj;
             },
+            guard(val) {
+                if (!val || typeof val !== "object")
+                    return false;
+                for (let i = 0; i < entries.length; i++) {
+                    const { key, guard } = entries[i];
+                    if (!guard(val[key]))
+                        return false;
+                }
+                return true;
+            },
         };
     }
     decode(buff) {
-        buff.resetCursor();
+        if (this.options?.resetCursor)
+            buff.resetCursor();
         if (this.options?.version) {
             const buffVersion = buff.readString();
             if (buffVersion !== this.options.version)
@@ -111,13 +122,22 @@ class Serializer {
     encode(obj, buff) {
         if (!buff)
             buff = new buffer_1.Buffer();
-        else
+        else if (this.options?.resetCursor)
             buff.resetCursor();
         if (this.options?.version) {
             buff.writeString(this.options.version);
         }
-        this.compiledSchema.encode(buff, obj);
+        this.compiledSchema.encode(obj, buff);
         return buff;
+    }
+    guard(val) {
+        return this.compiledSchema.guard(val);
+    }
+    get name() {
+        return String(this._name);
+    }
+    set name(s) {
+        this._name = (this._name + textEncoder.encode(s).reduce((a, l) => a + l)) % (1 << 30);
     }
     static equal(schema1, schema2) {
         const stack1 = [schema1];

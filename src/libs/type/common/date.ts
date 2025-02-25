@@ -4,7 +4,7 @@ export const date = customType({
 	decode(buff) {
 		return buff.readDate();
 	},
-	encode(buffer, val) {
+	encode(val, buffer) {
 		buffer.writeDate(val);
 	},
 	guard(data) {

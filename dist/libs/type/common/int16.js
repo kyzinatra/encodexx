@@ -7,7 +7,7 @@ exports.int16 = (0, custom_type_1.customType)({
     decode(buff) {
         return buff.readInt16();
     },
-    encode(buffer, val) {
+    encode(val, buffer) {
         buffer.writeInt16(val);
     },
     guard(data) {

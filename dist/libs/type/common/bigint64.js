@@ -7,7 +7,7 @@ exports.bigint64 = (0, custom_type_1.customType)({
     decode(buff) {
         return buff.readBigInt64();
     },
-    encode(buffer, val) {
+    encode(val, buffer) {
         buffer.writeBigInt64(val);
     },
     guard(data) {

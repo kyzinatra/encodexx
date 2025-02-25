@@ -5,7 +5,7 @@ export const bigint64 = customType({
 	decode(buff) {
 		return buff.readBigInt64();
 	},
-	encode(buffer, val) {
+	encode(val, buffer) {
 		buffer.writeBigInt64(val);
 	},
 	guard(data): data is bigint {

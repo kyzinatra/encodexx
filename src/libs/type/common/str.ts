@@ -4,7 +4,7 @@ export const str = customType({
 	decode(buff) {
 		return buff.readString();
 	},
-	encode(buffer, val) {
+	encode(val, buffer) {
 		buffer.writeString(val);
 	},
 	guard(data) {

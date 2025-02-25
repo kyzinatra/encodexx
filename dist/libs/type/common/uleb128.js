@@ -6,7 +6,7 @@ exports.uleb128 = (0, custom_type_1.customType)({
     decode(buff) {
         return buff.readUleb128();
     },
-    encode(buffer, val) {
+    encode(val, buffer) {
         buffer.writeUleb128(val);
     },
     guard(data) {

@@ -8,7 +8,7 @@ export function enumerate<T extends string[]>(...strs: T) {
 		decode(buffer): T[number] {
 			return strs[buffer.readUint16()];
 		},
-		encode(buffer, value) {
+		encode(value, buffer) {
 			const index = strs.indexOf(value);
 			if (index === -1) throw new TypeMatchError(`Enum doesn't contain ${value}`);
 			buffer.writeUint16(index);

@@ -1,6 +1,7 @@
 import { or } from "./or";
 import { enumerate } from "./enumerate";
 import { optional } from "./optional";
+import { schema } from "./schema";
 export declare const t: {
     /**
      * @description Implementation of a union type. Use this when you need to assign two or more different types to a field.
@@ -12,6 +13,11 @@ export declare const t: {
      * @example t.enumerate("CREATE", "READ", "UPDATE", "DELETE")
      */
     enumerate: typeof enumerate;
+    /**
+     *@description Convert any schema to type. Be careful, it may hurts performance!
+     * @example t.or(t.schema([t.bool]), t.schema([t.int8]))
+     */
+    schema: typeof schema;
     /**
      * @description Represents an 8-bit unsigned integer. This type supports values ranging from 0 to 255.
      * @example 200

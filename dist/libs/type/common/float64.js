@@ -6,7 +6,7 @@ exports.float64 = (0, custom_type_1.customType)({
     decode(buff) {
         return buff.readFloat64();
     },
-    encode(buffer, val) {
+    encode(val, buffer) {
         buffer.writeFloat64(val);
     },
     guard(data) {

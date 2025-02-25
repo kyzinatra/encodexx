@@ -6,7 +6,7 @@ exports.str = (0, custom_type_1.customType)({
     decode(buff) {
         return buff.readString();
     },
-    encode(buffer, val) {
+    encode(val, buffer) {
         buffer.writeString(val);
     },
     guard(data) {

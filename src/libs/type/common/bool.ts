@@ -4,7 +4,7 @@ export const bool = customType({
 	decode(buff) {
 		return buff.readBoolean();
 	},
-	encode(buffer, val) {
+	encode(val, buffer) {
 		buffer.writeBoolean(val);
 	},
 	guard(data) {

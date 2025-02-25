@@ -10,7 +10,7 @@ function enumerate(...strs) {
         decode(buffer) {
             return strs[buffer.readUint16()];
         },
-        encode(buffer, value) {
+        encode(value, buffer) {
             const index = strs.indexOf(value);
             if (index === -1)
                 throw new type_match_1.TypeMatchError(`Enum doesn't contain ${value}`);

@@ -16,7 +16,7 @@ export const boolArr = customType({
 		return result;
 	},
 
-	encode(buffer, val) {
+	encode(val, buffer) {
 		if (!Array.isArray(val)) throw new TypeMatchError();
 		buffer.writeUint32(val.length);
 

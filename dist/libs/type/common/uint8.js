@@ -7,7 +7,7 @@ exports.uint8 = (0, custom_type_1.customType)({
     decode(buff) {
         return buff.readUint8();
     },
-    encode(buffer, val) {
+    encode(val, buffer) {
         buffer.writeUint8(val);
     },
     guard(data) {

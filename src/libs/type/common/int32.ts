@@ -5,7 +5,7 @@ export const int32 = customType({
 	decode(buff) {
 		return buff.readInt32();
 	},
-	encode(buffer, val) {
+	encode(val, buffer) {
 		buffer.writeInt32(val);
 	},
 	guard(data): data is number {

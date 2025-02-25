@@ -4,7 +4,7 @@ export const float32 = customType({
 	decode(buff) {
 		return buff.readFloat32();
 	},
-	encode(buffer, val) {
+	encode(val, buffer) {
 		buffer.writeFloat32(val);
 	},
 	guard(data) {

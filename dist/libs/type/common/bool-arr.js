@@ -14,7 +14,7 @@ exports.boolArr = (0, custom_type_1.customType)({
         }
         return result;
     },
-    encode(buffer, val) {
+    encode(val, buffer) {
         if (!Array.isArray(val))
             throw new type_match_1.TypeMatchError();
         buffer.writeUint32(val.length);
