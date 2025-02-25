@@ -15,7 +15,7 @@ Encodexx is designed to be as developer-friendly as possible. No unnecessary fil
 - Extensive customization options
 - Uses a low-level JavaScript API for fast encoding and decoding
 
-  Visit [encodexx.net](https://encodexx.net) or install via:
+  Read the docs [encodexx.net](https://encodexx.net) and install via:
 
 ```bash
 npm i encodexx
@@ -75,7 +75,7 @@ const decoded = schema.decode(buffer);
 
 ## Schema Structure
 
-In your schema, you can specify objects and arrays of any complexity. Use the built-in functions `t.or`, `t.enumerate`, `t.optional`, and other built-in types to create schemas:
+In your schema, you can specify objects and arrays of any complexity. Use the built-in functions `t.or`, `t.schema`, `t.optional`, and other built-in types and functions to create schemas:
 
 ```js
 import { Serializer, t } from "encodexx";
@@ -104,50 +104,60 @@ You can create your own types and use them just like the built-in ones. Usually 
 
 ```ts
 import { customType } from "encodexx";
+// int number from −2^39 to 2^39 - 1 (using bigint)
 
-type TMyType = {
-	name: string;
-	age: number;
-};
+const MIN = -(2 ** 23);
+const MAX = 2 ** 23 - 1;
 
-const myType = customType<TMyType>({
+export const int24 = customType<number>({
 	decode(buffer) {
-		return {
-			name: buffer.readString(),
-			age: buffer.readUint8(),
-		};
+		const b0 = buffer.readUint8();
+		const b1 = buffer.readUint8();
+		const b2 = buffer.readUint8();
+
+		// Combine bytes into a 24-bit value:
+		let val24 = (b0 << 16) | (b1 << 8) | b2;
+		// We can set sign by shifting left and then right with sign:
+		val24 = (val24 << 8) >> 8;
+
+		return val24;
 	},
-	encode(buffer, val) {
-		buffer.writeString(val.name);
-		buffer.writeUint8(val.age);
+	encode(val, buffer) {
+		// Convert negative numbers to their two's complement representation in 24 bits.
+		if (val < 0) {
+			val += 2 ** 24;
+		}
+		// Store the 40-bit value in Big Endian order (most significant byte first).
+		buffer.writeUint8(Number((val >> 16) & 0xff));
+		buffer.writeUint8(Number((val >> 8) & 0xff));
+		buffer.writeUint8(Number(val & 0xff));
 	},
-	guard(data): data is TMyType {
-		if (typeof data !== "object" || !data) return false;
-		if (!("name" in data) || typeof data.name !== "string") return false;
-		if (!("age" in data) || typeof data.age !== "number") return false;
-		return true;
+	guard(data): data is number {
+		if (typeof data !== "number") return false;
+		return data <= MAX && data >= MIN;
 	},
-	name: "mytype",
+	name: "int24",
 });
 ```
 
 Then you can use this type on par with all the others:
 
 ```js
-const serializer = new Serializer(myType);
+const serializer = new Serializer([int24]);
 
-const encoded = serializer.encode({ name: "kyzinatra", age: 25 });
+const encoded = serializer.encode([124, -325, 240_000]);
 console.log(serializer.decode(encoded));
 ```
 
 ## Settings
 
-You can pass several settings to enforce stricter serializer behavior:
+You can pass several optional settings to enforce stricter serializer behavior:
 
 ```js
 new Serializer(..., {
   strict: true,    // Will verify each object against the schema
-  version: "1.2.10" // Will add a version tag during serialization. If the versions don't match during deserialization, it will throw an error
+  version: "1.2.10", // Will add a version tag during serialization. If the versions don't match during deserialization, it will throw an error
+	resetCursor: true // Automatically resets the cursor during encoding and decoding. This parameter is needed for implementing complex custom types and is not required for normal usage. default - true
 });
 ```
 
