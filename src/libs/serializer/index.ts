@@ -1,7 +1,8 @@
 import { Buffer } from "../buffer";
 import { OutdatedError } from "../error/outdated";
 import { TypeMatchError } from "../error/type-match";
-import { TCustomType, TYPE_SYMBOL } from "../type/custom-type";
+import { TOptionalSchema } from "../type/common/optional";
+import { OPTIONAL_SYMBOL, TCustomType, TYPE_SYMBOL } from "../type/custom-type";
 import {
 	TCompiledSchema,
 	TConvertSchemaToType,
@@ -13,14 +14,20 @@ import {
 export class Serializer<T extends TSchema> {
 	private compiledSchema: TCompiledSchema<TConvertValueToType<T>>;
 
-	constructor(private type: T, private options?: TSerializerOptions) {
+	constructor(type: T, private options?: TSerializerOptions) {
 		this.compiledSchema = this.compileSchema(type, options?.strict);
 	}
 
 	private static isCustomType(type: unknown): type is TCustomType {
 		return !!(typeof type === "object" && type && TYPE_SYMBOL in type);
 	}
-	private compileSchema(schema: TSchema, strict?: boolean): TCompiledSchema {
+	private static isOptionalType(type: unknown): type is TOptionalSchema {
+		return !!(typeof type === "object" && type && OPTIONAL_SYMBOL in type);
+	}
+	private compileSchema(schema: TSchema, strict?: boolean, isOptional = false): TCompiledSchema {
+		if (Serializer.isOptionalType(schema)) {
+			return this.compileSchema(schema.data, strict, true);
+		}
 		if (Serializer.isCustomType(schema)) {
 			return {
 				decode: (buff) => schema.decode(buff),
@@ -39,25 +46,25 @@ export class Serializer<T extends TSchema> {
 		if (Array.isArray(schema)) {
 			const compiledItem = this.compileSchema(schema[0], strict);
 			return {
-				encode: strict
-					? (buff, arr: any[]) => {
-							if (strict && !Array.isArray(arr)) {
-								throw new TypeMatchError(`array schema doesn't match ${arr}`);
-							}
-							const len = arr.length;
-							buff.writeUint32(len);
-							for (let i = 0; i < len; i++) {
-								compiledItem.encode(buff, arr[i]);
-							}
-					  }
-					: (buff, arr: any[]) => {
-							const len = arr.length;
-							buff.writeUint32(len);
-							for (let i = 0; i < len; i++) {
-								compiledItem.encode(buff, arr[i]);
-							}
-					  },
+				encode: (buff, arr: any[]) => {
+					if (isOptional && arr === undefined) {
+						buff.writeBoolean(true);
+						return;
+					}
+					if (strict && !Array.isArray(arr)) {
+						throw new TypeMatchError(`array schema doesn't match ${arr}`);
+					}
+					const len = arr.length;
+					isOptional && buff.writeBoolean(false);
+					buff.writeUint32(len);
+					for (let i = 0; i < len; i++) {
+						compiledItem.encode(buff, arr[i]);
+					}
+				},
 				decode(buff) {
+					if (isOptional && buff.readBoolean()) {
+						return;
+					}
 					const len = buff.readUint32();
 					const result = new Array(len);
 					for (let i = 0; i < len; i++) {
@@ -81,12 +88,19 @@ export class Serializer<T extends TSchema> {
 
 		return {
 			encode(buff, obj: Record<string, any>) {
+				if (isOptional && obj === undefined) {
+					buff.writeBoolean(true);
+					return;
+				}
+				isOptional && buff.writeBoolean(false);
 				for (let i = 0; i < entries.length; i++) {
 					const { key, encode } = entries[i];
 					encode(buff, obj[key]);
 				}
 			},
 			decode(buff) {
+				if (isOptional && buff.readBoolean()) return;
+
 				const obj: Record<string, any> = {};
 				for (let i = 0; i < entries.length; i++) {
 					const { key, decode } = entries[i];

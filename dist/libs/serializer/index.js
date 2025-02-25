@@ -7,14 +7,19 @@ const type_match_1 = require("../error/type-match");
 const custom_type_1 = require("../type/custom-type");
 class Serializer {
     constructor(type, options) {
-        this.type = type;
         this.options = options;
         this.compiledSchema = this.compileSchema(type, options?.strict);
     }
     static isCustomType(type) {
         return !!(typeof type === "object" && type && custom_type_1.TYPE_SYMBOL in type);
     }
-    compileSchema(schema, strict) {
+    static isOptionalType(type) {
+        return !!(typeof type === "object" && type && custom_type_1.OPTIONAL_SYMBOL in type);
+    }
+    compileSchema(schema, strict, isOptional = false) {
+        if (Serializer.isOptionalType(schema)) {
+            return this.compileSchema(schema.data, strict, true);
+        }
         if (Serializer.isCustomType(schema)) {
             return {
                 decode: (buff) => schema.decode(buff),
@@ -32,25 +37,25 @@ class Serializer {
         if (Array.isArray(schema)) {
             const compiledItem = this.compileSchema(schema[0], strict);
             return {
-                encode: strict
-                    ? (buff, arr) => {
-                        if (strict && !Array.isArray(arr)) {
-                            throw new type_match_1.TypeMatchError(`array schema doesn't match ${arr}`);
-                        }
-                        const len = arr.length;
-                        buff.writeUint32(len);
-                        for (let i = 0; i < len; i++) {
-                            compiledItem.encode(buff, arr[i]);
-                        }
+                encode: (buff, arr) => {
+                    if (isOptional && arr === undefined) {
+                        buff.writeBoolean(true);
+                        return;
                     }
-                    : (buff, arr) => {
-                        const len = arr.length;
-                        buff.writeUint32(len);
-                        for (let i = 0; i < len; i++) {
-                            compiledItem.encode(buff, arr[i]);
-                        }
-                    },
+                    if (strict && !Array.isArray(arr)) {
+                        throw new type_match_1.TypeMatchError(`array schema doesn't match ${arr}`);
+                    }
+                    const len = arr.length;
+                    isOptional && buff.writeBoolean(false);
+                    buff.writeUint32(len);
+                    for (let i = 0; i < len; i++) {
+                        compiledItem.encode(buff, arr[i]);
+                    }
+                },
                 decode(buff) {
+                    if (isOptional && buff.readBoolean()) {
+                        return;
+                    }
                     const len = buff.readUint32();
                     const result = new Array(len);
                     for (let i = 0; i < len; i++) {
@@ -72,12 +77,19 @@ class Serializer {
         });
         return {
             encode(buff, obj) {
+                if (isOptional && obj === undefined) {
+                    buff.writeBoolean(true);
+                    return;
+                }
+                isOptional && buff.writeBoolean(false);
                 for (let i = 0; i < entries.length; i++) {
                     const { key, encode } = entries[i];
                     encode(buff, obj[key]);
                 }
             },
             decode(buff) {
+                if (isOptional && buff.readBoolean())
+                    return;
                 const obj = {};
                 for (let i = 0; i < entries.length; i++) {
                     const { key, decode } = entries[i];

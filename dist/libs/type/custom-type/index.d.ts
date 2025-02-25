@@ -1,5 +1,6 @@
 import { Buffer } from "../../buffer";
 export declare const TYPE_SYMBOL: unique symbol;
+export declare const OPTIONAL_SYMBOL: unique symbol;
 export type TCustomType<K = any> = {
     readonly name: string;
     decode: (buffer: Buffer) => K;
