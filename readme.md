@@ -3,6 +3,22 @@
   <h1 align="center">Encodexx</h1>
 </p>
 
+[![Build Size](https://img.shields.io/bundlephobia/minzip/encodexx?label=bundle%20size&style=flat&colorA=000000&colorB=000000)](https://bundlephobia.com/result?p=encodexx)
+[![License](https://img.shields.io/github/license/kyzinatra/encodexx)](https://github.com/kyzinatra/encodexx/blob/master/LICENSE)
+
+# Table of Contents
+
+- [What is Encodexx](#what-is-encodexx)
+- [Defining a Schema](#defining-a-schema)
+- [Encoding an Object](#encoding-an-object)
+- [Decoding an Object](#decoding-an-object)
+- [Schema Structure](#schema-structure)
+- [Custom Types](#custom-types)
+- [Settings](#settings)
+- [Contributing](#contributing)
+- [License](#license)
+- [Links](#links)
+
 # What is Encodexx
 
 Primitive, flexible, fast, compact, and fully type-safe binary serializer for JavaScript.
@@ -15,13 +31,11 @@ Encodexx is designed to be as developer-friendly as possible. No unnecessary fil
 - Extensive customization options
 - Uses a low-level JavaScript API for fast encoding and decoding
 
-  Read the docs [encodexx.net](https://encodexx.net) and install via:
+Read the docs [encodexx.net](https://encodexx.net) and install via:
 
 ```bash
 npm i encodexx
 ```
-
-[![Build Size](https://img.shields.io/bundlephobia/minzip/encodexx?label=bundle%20size&style=flat&colorA=000000&colorB=000000)](https://bundlephobia.com/result?p=encodexx)
 
 [Demo on codesanbox](https://codesandbox.io/p/sandbox/gd4jhj)
 
@@ -160,6 +174,14 @@ new Serializer(..., {
 	resetCursor: true // Automatically resets the cursor during encoding and decoding. This parameter is needed for implementing complex custom types and is not required for normal usage. default - true
 });
 ```
+
+## Contributing
+
+We welcome contributions! Please read our [contributing guidelines](CONTRIBUTING.md) before submitting a pull request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Links
 

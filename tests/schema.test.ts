@@ -114,3 +114,194 @@ describe("t.or type", () => {
 		expect(decoded).toEqual(original);
 	});
 });
+
+describe("t.or type with t.schema and key arguments", () => {
+	it("should serialize and deserialize multiple objects with different keys", () => {
+		const serializer = new Serializer({
+			entries: t.or(
+				t.schema(
+					{
+						type: t.enumerate("TYPE_A"),
+						id: t.str,
+						value: t.int32,
+					},
+					"type"
+				),
+				t.schema(
+					{
+						type: t.enumerate("TYPE_B"),
+						id: t.str,
+						description: t.str,
+					},
+					"type"
+				)
+			),
+		});
+		const original = {
+			entries: {
+				type: "TYPE_A" as const,
+				id: "123",
+				value: 42,
+			},
+		};
+		const encoded = serializer.encode(original);
+		const decoded = serializer.decode(encoded);
+		expect(decoded).toEqual(original);
+
+		const original2 = {
+			entries: {
+				type: "TYPE_B" as const,
+				id: "456",
+				description: "A description",
+			},
+		};
+		const encoded2 = serializer.encode(original2);
+		const decoded2 = serializer.decode(encoded2);
+		expect(decoded2).toEqual(original2);
+	});
+
+	it("should handle nested schemas with different keys", () => {
+		const serializer = new Serializer({
+			data: t.schema(
+				{
+					main: t.or(
+						t.schema(
+							{
+								type: t.enumerate("MAIN_A"),
+								value: t.float64,
+							},
+							"type"
+						),
+						t.schema(
+							{
+								type: t.enumerate("MAIN_B"),
+								flag: t.bool,
+							},
+							"type"
+						)
+					),
+					extra: t.or(
+						t.schema(
+							{
+								description: t.str,
+								count: t.int32,
+							},
+							"description"
+						),
+						t.none
+					),
+				},
+				"main"
+			),
+		});
+		const original = {
+			data: {
+				main: {
+					type: "MAIN_A" as const,
+					value: 42.42,
+				},
+				extra: {
+					description: "Extra Info",
+					count: 10,
+				},
+			},
+		};
+		const encoded = serializer.encode(original);
+		const decoded = serializer.decode(encoded);
+		expect(decoded).toEqual(original);
+
+		const original2 = {
+			data: {
+				main: {
+					type: "MAIN_B" as const,
+					flag: true,
+				},
+				extra: null,
+			},
+		};
+		const encoded2 = serializer.encode(original2);
+		const decoded2 = serializer.decode(encoded2);
+		expect(decoded2).toEqual(original2);
+	});
+
+	it("should serialize and deserialize deeply nested schemas with different keys", () => {
+		const serializer = new Serializer({
+			config: t.schema(
+				{
+					settings: t.or(
+						t.schema(
+							{
+								mode: t.enumerate("AUTO"),
+								options: t.schema(
+									{
+										enabled: t.bool,
+										threshold: t.float32,
+									},
+									"enabled"
+								),
+							},
+							"mode"
+						),
+						t.schema(
+							{
+								mode: t.enumerate("MANUAL"),
+								options: t.schema(
+									{
+										enabled: t.bool,
+										level: t.int16,
+									},
+									"enabled"
+								),
+							},
+							"mode"
+						)
+					),
+					meta: t.or(
+						t.schema(
+							{
+								created: t.date,
+								modified: t.optional(t.date),
+							},
+							"created"
+						),
+						t.none
+					),
+				},
+				"settings"
+			),
+		});
+		const original = {
+			config: {
+				settings: {
+					mode: "AUTO" as const,
+					options: {
+						enabled: true,
+						threshold: 0.75,
+					},
+				},
+				meta: {
+					created: new Date(),
+				},
+			},
+		};
+		const encoded = serializer.encode(original);
+		const decoded = serializer.decode(encoded);
+		expect(decoded).toEqual(original);
+
+		const original2 = {
+			config: {
+				settings: {
+					mode: "MANUAL" as const,
+					options: {
+						enabled: false,
+						level: 5,
+					},
+				},
+				meta: null,
+			},
+		};
+		const encoded2 = serializer.encode(original2);
+		const decoded2 = serializer.decode(encoded2);
+		expect(decoded2).toEqual(original2);
+	});
+});
