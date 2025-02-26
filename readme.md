@@ -4,6 +4,7 @@
 </p>
 
 [![Build Size](https://img.shields.io/bundlephobia/minzip/encodexx?label=bundle%20size&style=flat&colorA=000000&colorB=000000)](https://bundlephobia.com/result?p=encodexx)
+![Dependencies](https://badgen.net/bundlephobia/dependency-count/encodexx)
 [![License](https://img.shields.io/github/license/kyzinatra/encodexx)](https://github.com/kyzinatra/encodexx/blob/master/LICENSE)
 
 # Table of Contents
@@ -26,7 +27,7 @@ Primitive, flexible, fast, compact, and fully type-safe binary serializer for Ja
 Encodexx is designed to be as developer-friendly as possible. No unnecessary files or duplicate type declarations in TypeScript. Its highly flexible architecture allows to describe any data and serialize it as quickly and compactly as possible to maximize the speed of your interface.
 
 - Zero dependencies
-- 3.6 KB bundle
+- 3.5 KB bundle
 - Works in both the browser and Node.js
 - Extensive customization options
 - Uses a low-level JavaScript API for fast encoding and decoding
