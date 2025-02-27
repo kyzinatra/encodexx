@@ -52,6 +52,7 @@ export class DataBuffer {
 
 	constructor(newBuffer?: ArrayBuffer, private size = KB) {
 		this._buffer = newBuffer ? newBuffer : new ArrayBuffer(size);
+		this.size = this._buffer.byteLength;
 		this.view = new DataView(this._buffer);
 		this.unitView = new Uint8Array(this._buffer);
 	}

@@ -46,6 +46,7 @@ class DataBuffer {
         this.textDecoder = new TextDecoder();
         this.textEncoder = new TextEncoder();
         this._buffer = newBuffer ? newBuffer : new ArrayBuffer(size);
+        this.size = this._buffer.byteLength;
         this.view = new DataView(this._buffer);
         this.unitView = new Uint8Array(this._buffer);
     }
