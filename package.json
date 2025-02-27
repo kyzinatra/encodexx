@@ -21,7 +21,7 @@
 	"license": "MIT",
 	"type": "commonjs",
 	"sideEffects": false,
-	"homepage": "https://github.com/kyzinatra/encodexx",
+	"homepage": "https://encodexx.net/",
 	"repository": "https://github.com/kyzinatra/encodexx",
 	"devDependencies": {
 		"@jest/globals": "^29.7.0",
