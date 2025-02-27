@@ -1,4 +1,4 @@
-export declare class Buffer {
+export declare class DataBuffer {
     private size;
     private _cursor;
     private set cursor(value);
@@ -10,6 +10,7 @@ export declare class Buffer {
     private view;
     private unitView;
     get buffer(): ArrayBuffer;
+    get uint8Array(): Uint8Array<ArrayBuffer>;
     get length(): number;
     private textDecoder;
     private textEncoder;

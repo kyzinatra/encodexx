@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Buffer = exports.customType = exports.TYPE_SYMBOL = exports.TypeMatchError = exports.t = exports.Serializer = void 0;
+exports.DataBuffer = exports.customType = exports.TYPE_SYMBOL = exports.TypeMatchError = exports.t = exports.Serializer = void 0;
 var serializer_1 = require("./libs/serializer");
 Object.defineProperty(exports, "Serializer", { enumerable: true, get: function () { return serializer_1.Serializer; } });
 var common_1 = require("./libs/type/common");
@@ -12,4 +12,4 @@ Object.defineProperty(exports, "TYPE_SYMBOL", { enumerable: true, get: function 
 var custom_type_2 = require("./libs/type/custom-type");
 Object.defineProperty(exports, "customType", { enumerable: true, get: function () { return custom_type_2.customType; } });
 var buffer_1 = require("./libs/buffer");
-Object.defineProperty(exports, "Buffer", { enumerable: true, get: function () { return buffer_1.Buffer; } });
+Object.defineProperty(exports, "DataBuffer", { enumerable: true, get: function () { return buffer_1.DataBuffer; } });

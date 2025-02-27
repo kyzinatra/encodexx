@@ -1,4 +1,4 @@
-import { Buffer } from "../buffer";
+import { DataBuffer } from "../buffer";
 import { TConvertValueToType, TSchema, TSerializerOptions } from "./index.type";
 export declare class Serializer<T extends TSchema> {
     private options;
@@ -6,8 +6,8 @@ export declare class Serializer<T extends TSchema> {
     constructor(type: T, options?: TSerializerOptions);
     private static isCustomType;
     private compileSchema;
-    decode(buff: Buffer | ArrayBuffer): TConvertValueToType<T>;
-    encode(obj: TConvertValueToType<T>, buff?: Buffer): Buffer;
+    decode(buff: DataBuffer | ArrayBuffer | Uint8Array): TConvertValueToType<T>;
+    encode(obj: TConvertValueToType<T>, buff?: DataBuffer): DataBuffer;
     guard(val: unknown): val is TConvertValueToType<T>;
     private _name;
     get name(): string;

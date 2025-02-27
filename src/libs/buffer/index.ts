@@ -3,7 +3,7 @@ import { OutOfRangeError } from "../error/out-of-range";
 
 const KB = 1024;
 
-export class Buffer {
+export class DataBuffer {
 	private _cursor: number = 0;
 
 	private set cursor(n: number) {
@@ -39,6 +39,9 @@ export class Buffer {
 
 	get buffer() {
 		return this._buffer.slice(0, this.end);
+	}
+	get uint8Array() {
+		return this.unitView.slice(0, this.end);
 	}
 	get length() {
 		return this.end;

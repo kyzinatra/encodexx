@@ -114,7 +114,7 @@ new Serializer({
 
 ## Custom Types
 
-You can create your own types and use them just like the built-in ones. Usually you won't need this, but there are cases when you want low-level `Buffer` access to write your data. See the [documentation](https://encodexx.net/docs) for more details and examples.
+You can create your own types and use them just like the built-in ones. Usually you won't need this, but there are cases when you want low-level `DataBuffer` access to write your data. See the [documentation](https://encodexx.net/docs) for more details and examples.
 
 ```ts
 import { customType } from "encodexx";
@@ -171,7 +171,7 @@ You can pass several optional settings to enforce stricter serializer behavior:
 new Serializer(..., {
   strict: true,    // Will verify each object against the schema
   version: "1.2.10", // Will add a version tag during serialization. If the versions don't match during deserialization, it will throw an error
-	resetCursor: true // Automatically resets the cursor during encoding and decoding. This parameter is needed for implementing complex custom types and is not required for normal usage. default - true
+  resetCursor: true // Automatically resets the cursor during encoding and decoding. This parameter is needed for implementing complex custom types and is not required for normal usage. default - true
 });
 ```
 

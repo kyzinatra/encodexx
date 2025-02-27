@@ -1,5 +1,5 @@
 import { TCustomType } from "../type/custom-type";
-import { Buffer } from "../buffer";
+import { DataBuffer } from "../buffer";
 export type TSchema = TCustomType | TSchemaObject | TArraysTypes;
 export type TArraysTypes = [TSchemaObject] | [TCustomType] | [TArraysTypes];
 export type TSchemaObject = {
@@ -12,8 +12,8 @@ export type TConvertSchemaToType<T extends TSchemaObject> = {
     [key in keyof T as undefined extends TConvertValueToType<T[key]> ? key : never]?: Exclude<TConvertValueToType<T[key]>, undefined>;
 };
 export type TCompiledSchema<T = any> = {
-    encode(obj: T, buff: Buffer): void;
-    decode(buff: Buffer): T;
+    encode(obj: T, buff: DataBuffer): void;
+    decode(buff: DataBuffer): T;
     guard(val: unknown): val is T;
 };
 export type TSerializerOptions = {

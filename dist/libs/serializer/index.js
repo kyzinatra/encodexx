@@ -110,8 +110,11 @@ class Serializer {
         };
     }
     decode(buff) {
+        // transforms
         if (buff instanceof ArrayBuffer)
-            buff = new buffer_1.Buffer(buff);
+            buff = new buffer_1.DataBuffer(buff);
+        if (buff instanceof Uint8Array)
+            buff = new buffer_1.DataBuffer(buff.buffer.slice(buff.byteOffset, buff.byteOffset + buff.byteLength));
         if (this.options?.resetCursor)
             buff.resetCursor();
         if (this.options?.version) {
@@ -123,7 +126,7 @@ class Serializer {
     }
     encode(obj, buff) {
         if (!buff)
-            buff = new buffer_1.Buffer();
+            buff = new buffer_1.DataBuffer();
         else if (this.options?.resetCursor)
             buff.resetCursor();
         if (this.options?.version) {

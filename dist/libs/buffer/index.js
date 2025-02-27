@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Buffer = void 0;
+exports.DataBuffer = void 0;
 const types_1 = require("../constants/types");
 const out_of_range_1 = require("../error/out-of-range");
 const KB = 1024;
-class Buffer {
+class DataBuffer {
     set cursor(n) {
         //? rsize
         if (n >= this.size) {
@@ -32,6 +32,9 @@ class Buffer {
     }
     get buffer() {
         return this._buffer.slice(0, this.end);
+    }
+    get uint8Array() {
+        return this.unitView.slice(0, this.end);
     }
     get length() {
         return this.end;
@@ -233,4 +236,4 @@ class Buffer {
         return new Date(Number(this.readBigUint64()));
     }
 }
-exports.Buffer = Buffer;
+exports.DataBuffer = DataBuffer;

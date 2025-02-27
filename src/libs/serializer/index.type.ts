@@ -1,5 +1,5 @@
 import { TCustomType } from "../type/custom-type";
-import { Buffer } from "../buffer";
+import { DataBuffer } from "../buffer";
 
 export type TSchema = TCustomType | TSchemaObject | TArraysTypes;
 
@@ -31,8 +31,8 @@ export type TConvertSchemaToType<T extends TSchemaObject> = {
 };
 
 export type TCompiledSchema<T = any> = {
-	encode(obj: T, buff: Buffer): void;
-	decode(buff: Buffer): T;
+	encode(obj: T, buff: DataBuffer): void;
+	decode(buff: DataBuffer): T;
 	guard(val: unknown): val is T;
 };
 

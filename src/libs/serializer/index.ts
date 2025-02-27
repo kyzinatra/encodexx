@@ -1,4 +1,4 @@
-import { Buffer } from "../buffer";
+import { DataBuffer } from "../buffer";
 import { OutdatedError } from "../error/outdated";
 import { TypeMatchError } from "../error/type-match";
 import { TCustomType, TYPE_SYMBOL } from "../type/custom-type";
@@ -110,8 +110,12 @@ export class Serializer<T extends TSchema> {
 		};
 	}
 
-	decode(buff: Buffer | ArrayBuffer) {
-		if (buff instanceof ArrayBuffer) buff = new Buffer(buff);
+	decode(buff: DataBuffer | ArrayBuffer | Uint8Array) {
+		// transforms
+		if (buff instanceof ArrayBuffer) buff = new DataBuffer(buff);
+		if (buff instanceof Uint8Array)
+			buff = new DataBuffer(buff.buffer.slice(buff.byteOffset, buff.byteOffset + buff.byteLength));
+
 		if (this.options?.resetCursor) buff.resetCursor();
 
 		if (this.options?.version) {
@@ -122,8 +126,8 @@ export class Serializer<T extends TSchema> {
 		return this.compiledSchema.decode(buff);
 	}
 
-	encode(obj: TConvertValueToType<T>, buff?: Buffer) {
-		if (!buff) buff = new Buffer();
+	encode(obj: TConvertValueToType<T>, buff?: DataBuffer) {
+		if (!buff) buff = new DataBuffer();
 		else if (this.options?.resetCursor) buff.resetCursor();
 
 		if (this.options?.version) {
