@@ -54,12 +54,12 @@ const schema = new Serializer({
 		updatedAt: t.optional(t.date),
 	},
 	age: t.uint8,
-	logs: [
+	logs: t.optional([
 		{
 			date: t.date,
 			info: t.str,
 		},
-	],
+	]),
 });
 ```
 
@@ -74,7 +74,6 @@ const obj = {
 		createdAt: new Date(),
 	},
 	age: 27,
-	logs: [],
 };
 
 const buffer = schema.encode(obj);

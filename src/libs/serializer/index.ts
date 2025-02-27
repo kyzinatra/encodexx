@@ -110,7 +110,8 @@ export class Serializer<T extends TSchema> {
 		};
 	}
 
-	decode(buff: Buffer) {
+	decode(buff: Buffer | ArrayBuffer) {
+		if (buff instanceof ArrayBuffer) buff = new Buffer(buff);
 		if (this.options?.resetCursor) buff.resetCursor();
 
 		if (this.options?.version) {

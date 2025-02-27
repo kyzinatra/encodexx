@@ -110,6 +110,8 @@ class Serializer {
         };
     }
     decode(buff) {
+        if (buff instanceof ArrayBuffer)
+            buff = new buffer_1.Buffer(buff);
         if (this.options?.resetCursor)
             buff.resetCursor();
         if (this.options?.version) {

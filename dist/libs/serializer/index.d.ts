@@ -6,7 +6,7 @@ export declare class Serializer<T extends TSchema> {
     constructor(type: T, options?: TSerializerOptions);
     private static isCustomType;
     private compileSchema;
-    decode(buff: Buffer): TConvertValueToType<T>;
+    decode(buff: Buffer | ArrayBuffer): TConvertValueToType<T>;
     encode(obj: TConvertValueToType<T>, buff?: Buffer): Buffer;
     guard(val: unknown): val is TConvertValueToType<T>;
     private _name;
