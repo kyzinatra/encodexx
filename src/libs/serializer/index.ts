@@ -111,7 +111,6 @@ export class Serializer<T extends TSchema> {
 	}
 
 	decode(buff: DataBuffer | ArrayBuffer | Uint8Array) {
-		// transforms
 		if (buff instanceof ArrayBuffer) buff = new DataBuffer(buff);
 		if (buff instanceof Uint8Array)
 			buff = new DataBuffer(buff.buffer.slice(buff.byteOffset, buff.byteOffset + buff.byteLength));
