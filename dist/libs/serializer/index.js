@@ -110,7 +110,6 @@ class Serializer {
         };
     }
     decode(buff) {
-        // transforms
         if (buff instanceof ArrayBuffer)
             buff = new buffer_1.DataBuffer(buff);
         if (buff instanceof Uint8Array)
