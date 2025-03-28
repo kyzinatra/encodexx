@@ -151,66 +151,82 @@ export class DataBuffer {
 		this.check(val, "int8");
 
 		this.cursor += 1;
-		this.view.setInt8(this.cursor - 1, val);
+		this.unitView[this.cursor - 1] = val & 0xff;
 	}
 	readInt8() {
-		this.cursor += 1;
-		return this.view.getInt8(this.cursor - 1);
+		return (this.readUint8() << 24) >> 24;
 	}
 
 	writeUint8(val: number) {
 		this.check(val, "uint8");
-
 		this.cursor += 1;
-		this.view.setUint8(this.cursor - 1, val);
+		this.unitView[this.cursor - 1] = val & 0xff;
 	}
 	readUint8() {
 		this.cursor += 1;
-		return this.view.getUint8(this.cursor - 1);
+		return this.unitView[this.cursor - 1];
 	}
 
 	writeInt16(val: number) {
 		this.check(val, "int16");
 
 		this.cursor += 2;
-		this.view.setInt16(this.cursor - 2, val, true);
+		this.unitView[this.cursor - 2] = val & 0xff;
+		this.unitView[this.cursor - 1] = (val >> 8) & 0xff;
 	}
 	readInt16() {
-		this.cursor += 2;
-		return this.view.getInt16(this.cursor - 2, true);
+		return (this.readUint16() << 16) >> 16;
 	}
 
 	writeUint16(val: number) {
 		this.check(val, "uint16");
 
 		this.cursor += 2;
-		this.view.setUint16(this.cursor - 2, val, true);
+		this.unitView[this.cursor - 2] = val & 0xff;
+		this.unitView[this.cursor - 1] = (val >> 8) & 0xff;
 	}
 	readUint16() {
 		this.cursor += 2;
-		return this.view.getUint16(this.cursor - 2, true);
+		return this.unitView[this.cursor - 2] | (this.unitView[this.cursor - 1] << 8);
 	}
 
 	writeInt32(val: number) {
 		this.check(val, "int32");
 
 		this.cursor += 4;
-		this.view.setInt32(this.cursor - 4, val, true);
+		this.unitView[this.cursor - 4] = val & 0xff;
+		this.unitView[this.cursor - 3] = (val >> 8) & 0xff;
+		this.unitView[this.cursor - 2] = (val >> 16) & 0xff;
+		this.unitView[this.cursor - 1] = (val >> 24) & 0xff;
 	}
 	readInt32() {
 		this.cursor += 4;
-		return this.view.getInt32(this.cursor - 4, true);
+		return (
+			this.unitView[this.cursor - 4] |
+			(this.unitView[this.cursor - 3] << 8) |
+			(this.unitView[this.cursor - 2] << 16) |
+			(this.unitView[this.cursor - 1] << 24)
+		);
 	}
 
 	writeUint32(val: number) {
 		this.check(val, "uint32");
 
 		this.cursor += 4;
-		this.view.setUint32(this.cursor - 4, val, true);
+		this.unitView[this.cursor - 4] = val & 0xff;
+		this.unitView[this.cursor - 3] = (val >> 8) & 0xff;
+		this.unitView[this.cursor - 2] = (val >> 16) & 0xff;
+		this.unitView[this.cursor - 1] = (val >> 24) & 0xff;
 	}
 	readUint32() {
 		this.cursor += 4;
-		return this.view.getUint32(this.cursor - 4, true);
+		return (
+			(this.unitView[this.cursor - 4] |
+				(this.unitView[this.cursor - 3] << 8) |
+				(this.unitView[this.cursor - 2] << 16) |
+				(this.unitView[this.cursor - 1] << 24)) >>>
+			0
+		);
 	}
 
 	writeFloat32(val: number) {
