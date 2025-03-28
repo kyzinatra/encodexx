@@ -5,44 +5,41 @@ const types_1 = require("../constants/types");
 const out_of_range_1 = require("../error/out-of-range");
 const KB = 1024;
 class DataBuffer {
+    ensureCapacity(requiredCapacity) {
+        this.size = Math.max(this.size, requiredCapacity);
+        const newBuffer = new ArrayBuffer(this.size);
+        const newUnitView = new Uint8Array(newBuffer);
+        newUnitView.set(this.unitView, 0);
+        this._buffer = newBuffer;
+        this.unitView = newUnitView;
+        this.view = new DataView(newBuffer);
+    }
     set cursor(n) {
         //? rsize
         if (n >= this.size) {
-            this.size = n > this.size * 2 ? n + KB : this.size * 2;
-            const newBuffer = new ArrayBuffer(this.size);
-            const newUnitView = new Uint8Array(newBuffer);
-            newUnitView.set(this.unitView, 0);
-            this._buffer = newBuffer;
-            this.unitView = newUnitView;
-            this.view = new DataView(newBuffer);
+            const newSize = n > this.size * 2 ? n + this.size * 2 : this.size * 2;
+            this.ensureCapacity(newSize);
         }
         this._cursor = n;
-        if (this._cursor > this.end)
-            this.end = this._cursor;
     }
     get cursor() {
         return this._cursor;
     }
     resetCursor() {
         this.cursor = 0;
-        this.end = 0;
-    }
-    moveCursorBy(n) {
-        this.cursor += n;
     }
     get buffer() {
-        return this._buffer.slice(0, this.end);
+        return this._buffer.slice(0, this.cursor);
     }
     get uint8Array() {
-        return this.unitView.slice(0, this.end);
+        return this.unitView.slice(0, this.cursor);
     }
     get length() {
-        return this.end;
+        return this.cursor;
     }
     constructor(newBuffer, size = KB) {
         this.size = size;
         this._cursor = 0;
-        this.end = 0;
         this.textDecoder = new TextDecoder();
         this.textEncoder = new TextEncoder();
         this._buffer = newBuffer ? newBuffer : new ArrayBuffer(size);
@@ -58,15 +55,14 @@ class DataBuffer {
         if (_buffer instanceof ArrayBuffer) {
             _buffer = new Uint8Array(_buffer);
         }
-        //? Typescript check
-        if (_buffer instanceof ArrayBuffer)
-            return;
-        this.moveCursorBy(_buffer.length);
+        //@ts-expect-error we know that _buffer is Uint8Array
+        this.cursor += _buffer.length;
+        //@ts-expect-error we know that _buffer is Uint8Array
         this.unitView.set(_buffer, this.cursor - _buffer.length);
     }
     readBuffer(length) {
-        const data = this._buffer.slice(this.cursor, this.cursor + length);
-        this.moveCursorBy(length);
+        const data = this.unitView.subarray(this.cursor, this.cursor + length);
+        this.cursor += length;
         return data;
     }
     writeUleb128(value) {
@@ -127,96 +123,99 @@ class DataBuffer {
     }
     writeInt8(val) {
         this.check(val, "int8");
-        this.moveCursorBy(1);
+        this.cursor += 1;
         this.view.setInt8(this.cursor - 1, val);
     }
     readInt8() {
-        this.moveCursorBy(1);
+        this.cursor += 1;
         return this.view.getInt8(this.cursor - 1);
     }
     writeUint8(val) {
         this.check(val, "uint8");
-        this.moveCursorBy(1);
+        this.cursor += 1;
         this.view.setUint8(this.cursor - 1, val);
     }
     readUint8() {
-        this.moveCursorBy(1);
+        this.cursor += 1;
         return this.view.getUint8(this.cursor - 1);
     }
     writeInt16(val) {
         this.check(val, "int16");
-        this.moveCursorBy(2);
-        this.view.setInt16(this.cursor - 2, val);
+        this.cursor += 2;
+        this.view.setInt16(this.cursor - 2, val, true);
     }
     readInt16() {
-        this.moveCursorBy(2);
-        return this.view.getInt16(this.cursor - 2);
+        this.cursor += 2;
+        return this.view.getInt16(this.cursor - 2, true);
     }
     writeUint16(val) {
         this.check(val, "uint16");
-        this.moveCursorBy(2);
-        this.view.setUint16(this.cursor - 2, val);
+        this.cursor += 2;
+        this.view.setUint16(this.cursor - 2, val, true);
     }
     readUint16() {
-        this.moveCursorBy(2);
-        return this.view.getUint16(this.cursor - 2);
+        this.cursor += 2;
+        return this.view.getUint16(this.cursor - 2, true);
     }
     writeInt32(val) {
         this.check(val, "int32");
-        this.moveCursorBy(4);
-        this.view.setInt32(this.cursor - 4, val);
+        this.cursor += 4;
+        this.view.setInt32(this.cursor - 4, val, true);
     }
     readInt32() {
-        this.moveCursorBy(4);
-        return this.view.getInt32(this.cursor - 4);
+        this.cursor += 4;
+        return this.view.getInt32(this.cursor - 4, true);
     }
     writeUint32(val) {
         this.check(val, "uint32");
-        this.moveCursorBy(4);
-        this.view.setUint32(this.cursor - 4, val);
+        this.cursor += 4;
+        this.view.setUint32(this.cursor - 4, val, true);
     }
     readUint32() {
-        this.moveCursorBy(4);
-        return this.view.getUint32(this.cursor - 4);
+        this.cursor += 4;
+        return this.view.getUint32(this.cursor - 4, true);
     }
     writeFloat32(val) {
-        this.moveCursorBy(4);
-        this.view.setFloat32(this.cursor - 4, val);
+        this.cursor += 4;
+        this.view.setFloat32(this.cursor - 4, val, true);
     }
     readFloat32() {
-        this.moveCursorBy(4);
-        return this.view.getFloat32(this.cursor - 4);
+        this.cursor += 4;
+        return this.view.getFloat32(this.cursor - 4, true);
     }
     writeFloat64(val) {
-        this.moveCursorBy(8);
-        this.view.setFloat64(this.cursor - 8, val);
+        this.cursor += 8;
+        this.view.setFloat64(this.cursor - 8, val, true);
     }
     readFloat64() {
-        this.moveCursorBy(8);
-        return this.view.getFloat64(this.cursor - 8);
+        this.cursor += 8;
+        return this.view.getFloat64(this.cursor - 8, true);
     }
     writeBigInt64(val) {
         this.check(val, "bigint64");
-        this.moveCursorBy(8);
-        this.view.setBigInt64(this.cursor - 8, val);
+        this.cursor += 8;
+        this.view.setBigInt64(this.cursor - 8, val, true);
     }
     readBigInt64() {
-        this.moveCursorBy(8);
-        return this.view.getBigInt64(this.cursor - 8);
+        this.cursor += 8;
+        return this.view.getBigInt64(this.cursor - 8, true);
     }
     writeBigUint64(val) {
         this.check(val, "biguint64");
-        this.moveCursorBy(8);
-        this.view.setBigUint64(this.cursor - 8, val);
+        this.cursor += 8;
+        this.view.setBigUint64(this.cursor - 8, val, true);
     }
     readBigUint64() {
-        this.moveCursorBy(8);
-        return this.view.getBigUint64(this.cursor - 8);
+        this.cursor += 8;
+        return this.view.getBigUint64(this.cursor - 8, true);
     }
     writeString(val) {
-        const text = this.textEncoder.encode(val);
-        this.writeUint32(text.length);
-        this.writeBuffer(text);
+        if (this._buffer.byteLength - this.cursor < val.length * 4) {
+            this.ensureCapacity(this.size + val.length * 4 + this.size * 2);
+        }
+        const { written } = this.textEncoder.encodeInto(val, this.unitView.subarray(this.cursor + 4));
+        this.writeUint32(written);
+        this.cursor += written;
     }
     readString() {
         const length = this.readUint32();

@@ -74,12 +74,12 @@ class Serializer {
             .sort()
             .map((key) => {
             this.name = key;
-            const compiledChild = this.compileSchema(schema[key], strict);
+            const { decode, encode, guard } = this.compileSchema(schema[key], strict);
             return {
                 key,
-                encode: compiledChild.encode,
-                decode: compiledChild.decode,
-                guard: compiledChild.guard,
+                encode,
+                decode,
+                guard,
             };
         });
         return {
@@ -112,8 +112,9 @@ class Serializer {
     decode(buff) {
         if (buff instanceof ArrayBuffer)
             buff = new buffer_1.DataBuffer(buff);
-        if (buff instanceof Uint8Array)
+        if (buff instanceof Uint8Array) {
             buff = new buffer_1.DataBuffer(buff.buffer.slice(buff.byteOffset, buff.byteOffset + buff.byteLength));
+        }
         if (this.options?.resetCursor)
             buff.resetCursor();
         if (this.options?.version) {

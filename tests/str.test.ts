@@ -77,4 +77,15 @@ describe("t.str type", () => {
 		const decoded = serializer.decode(encoded);
 		expect(decoded).toEqual(original);
 	});
+
+	it("should handle big string  correctly", () => {
+		const serializer = new Serializer({ value: t.str });
+		const original = {
+			value: "☹".repeat(500),
+		};
+
+		const encoded = serializer.encode(original);
+		const decoded = serializer.decode(encoded);
+		expect(decoded).toEqual(original);
+	});
 });

@@ -1,11 +1,10 @@
 export declare class DataBuffer {
     private size;
     private _cursor;
+    private ensureCapacity;
     private set cursor(value);
     get cursor(): number;
     resetCursor(): void;
-    private moveCursorBy;
-    private end;
     private _buffer;
     private view;
     private unitView;
@@ -17,7 +16,7 @@ export declare class DataBuffer {
     constructor(newBuffer?: ArrayBuffer, size?: number);
     private check;
     writeBuffer(_buffer: ArrayBuffer | Uint8Array): void;
-    readBuffer(length: number): ArrayBuffer;
+    readBuffer(length: number): Uint8Array<ArrayBufferLike>;
     writeUleb128(value: bigint): void;
     readUleb128(): bigint;
     writeSleb128(value: bigint): void;

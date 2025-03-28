@@ -20,10 +20,10 @@ describe("Encoded Buffer Size Tests", () => {
 		};
 
 		const encoded = serializer.encode(original);
-		expect(encoded.length).toEqual(1888894);
-
 		const decoded = serializer.decode(encoded);
-		expect(decoded.items.length).toEqual(100000);
+
+		expect(decoded).toEqual(original);
+		expect(encoded.length).toEqual(1888894);
 	});
 
 	it("should produce a sufficiently large buffer for a nested structure with large arrays of strings", () => {
@@ -43,12 +43,9 @@ describe("Encoded Buffer Size Tests", () => {
 				`Note ${i}: Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Integer nec odio.`
 			);
 		}
-
 		const encoded = serializer.encode(original);
-		expect(encoded.length).toEqual(137288);
-
 		const decoded = serializer.decode(encoded);
-		expect(decoded.paragraphs.length).toEqual(500);
-		expect(decoded.notes.list.length).toEqual(500);
+		expect(decoded).toEqual(original);
+		expect(encoded.length).toEqual(137288);
 	});
 });
