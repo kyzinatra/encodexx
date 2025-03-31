@@ -17,7 +17,9 @@ export declare class DataBuffer {
     private check;
     writeBuffer(_buffer: ArrayBuffer | Uint8Array): void;
     readBuffer(length: number): Uint8Array<ArrayBufferLike>;
+    writeUlebNumber128(value: number): void;
     writeUleb128(value: bigint): void;
+    readUleb128Number(): number;
     readUleb128(): bigint;
     writeSleb128(value: bigint): void;
     readSleb128(): bigint;

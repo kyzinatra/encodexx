@@ -23,7 +23,7 @@ describe("Encoded Buffer Size Tests", () => {
 		const decoded = serializer.decode(encoded);
 
 		expect(decoded).toEqual(original);
-		expect(encoded.length).toEqual(1888894);
+		expect(encoded.length).toEqual(1888893);
 	});
 
 	it("should produce a sufficiently large buffer for a nested structure with large arrays of strings", () => {
@@ -46,6 +46,6 @@ describe("Encoded Buffer Size Tests", () => {
 		const encoded = serializer.encode(original);
 		const decoded = serializer.decode(encoded);
 		expect(decoded).toEqual(original);
-		expect(encoded.length).toEqual(137288);
+		expect(encoded.length).toEqual(137284);
 	});
 });

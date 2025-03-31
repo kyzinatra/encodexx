@@ -76,6 +76,16 @@ export class DataBuffer {
 		return data;
 	}
 
+	writeUlebNumber128(value: number) {
+		while (value > 0x7f) {
+			this.unitView[this.cursor] = (value & 0x7f) | 0b10000000;
+			this.cursor++;
+			value >>= 7;
+		}
+
+		this.unitView[this.cursor] = value & 0x7f;
+		this.cursor++;
+	}
 	writeUleb128(value: bigint) {
 		while (value > 0x7fn) {
 			this.unitView[this.cursor] = Number((value & 0x7fn) | 0b10000000n);
@@ -86,7 +96,23 @@ export class DataBuffer {
 		this.unitView[this.cursor] = Number(value & 0x7fn);
 		this.cursor++;
 	}
+	readUleb128Number() {
+		let result = 0;
+		let shift = 0;
 
+		while (true) {
+			const byte = this.unitView[this.cursor];
+			this.cursor++;
+			result |= (byte & 0x7f) << shift;
+			shift += 7;
+
+			if ((byte & 0b10000000) === 0) {
+				break;
+			}
+		}
+
+		return result;
+	}
 	readUleb128() {
 		let result = 0n;
 		let shift = 0;

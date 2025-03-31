@@ -44,13 +44,13 @@ export class Serializer<T extends TSchema> {
 						throw new TypeMatchError(`array schema doesn't match ${arr}`);
 					}
 					const len = arr.length;
-					buff.writeUint32(len);
+					buff.writeUlebNumber128(len);
 					for (let i = 0; i < len; i++) {
 						compiledItem.encode(arr[i], buff);
 					}
 				},
 				decode(buff) {
-					const len = buff.readUint32();
+					const len = buff.readUleb128Number();
 					const result = new Array(len);
 					for (let i = 0; i < len; i++) {
 						result[i] = compiledItem.decode(buff);
