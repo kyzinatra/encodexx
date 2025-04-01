@@ -246,7 +246,7 @@ class DataBuffer {
         return this.view.getBigUint64(this.cursor - 8, true);
     }
     writeString(val) {
-        if (this._buffer.byteLength - this.cursor < val.length * 4) {
+        if (this._buffer.byteLength - this.cursor < val.length * 4 + 4) {
             this.ensureCapacity(this.size + val.length * 4 + this.size * 2);
         }
         const { written } = this.textEncoder.encodeInto(val, this.unitView.subarray(this.cursor + 4));
