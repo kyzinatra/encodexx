@@ -294,7 +294,7 @@ export class DataBuffer {
 	}
 
 	writeString(val: string) {
-		if (this._buffer.byteLength - this.cursor < val.length * 4) {
+		if (this._buffer.byteLength - this.cursor < val.length * 4 + 4) {
 			this.ensureCapacity(this.size + val.length * 4 + this.size * 2);
 		}
 
