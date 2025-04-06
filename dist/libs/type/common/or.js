@@ -7,8 +7,7 @@ function or(...types) {
         throw new Error("Too many types provided: Maximum allowed is 255");
     return (0, custom_type_1.customType)({
         decode(buff) {
-            const index = buff.readUint8();
-            return types[index].decode(buff);
+            return types[buff.readUint8()].decode(buff);
         },
         encode(val, buffer) {
             const typeIndex = types.findIndex((el) => el.guard(val));

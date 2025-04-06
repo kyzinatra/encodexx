@@ -7,8 +7,7 @@ export function or<T extends TCustomType[]>(...types: T) {
 
 	return customType({
 		decode(buff): ExtractValueType<T[number]> {
-			const index = buff.readUint8();
-			return types[index].decode(buff);
+			return types[buff.readUint8()].decode(buff);
 		},
 		encode(val, buffer) {
 			const typeIndex = types.findIndex((el) => el.guard(val));
