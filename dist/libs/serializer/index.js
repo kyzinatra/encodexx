@@ -142,7 +142,7 @@ class Serializer {
         return String(this._name);
     }
     set name(s) {
-        this._name = (this._name + textEncoder.encode(s).reduce((a, l) => a + l)) % (1 << 30);
+        this._name = ((this._name << 5) + this._name + textEncoder.encode(s).reduce((a, l) => a + l)) % (1 << 30);
     }
     static equal(schema1, schema2) {
         const stack1 = [schema1];

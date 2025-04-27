@@ -145,7 +145,7 @@ export class Serializer<T extends TSchema> {
 		return String(this._name);
 	}
 	private set name(s: string) {
-		this._name = (this._name + textEncoder.encode(s).reduce((a, l) => a + l)) % (1 << 30);
+		this._name = ((this._name << 5) + this._name + textEncoder.encode(s).reduce((a, l) => a + l)) % (1 << 30);
 	}
 	static equal(schema1: TSchema, schema2: TSchema) {
 		const stack1: TSchema[] = [schema1];
