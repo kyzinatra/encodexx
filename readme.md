@@ -1,4 +1,4 @@
-<p align="center">
+ <p align="center">
   <img src="https://raw.githubusercontent.com/kyzinatra/encodexx/master/public/logo.svg" alt="logo" width="200px" />
   <h1 align="center">Encodexx</h1>
 </p>
@@ -118,7 +118,6 @@ You can create your own types and use them just like the built-in ones. Usually 
 
 ```ts
 import { customType } from "encodexx";
-// int number from −2^39 to 2^39 - 1 (using bigint)
 
 const MIN = -(2 ** 23);
 const MAX = 2 ** 23 - 1;
@@ -141,7 +140,7 @@ export const int24 = customType<number>({
 		if (val < 0) {
 			val += 2 ** 24;
 		}
-		// Store the 40-bit value in Big Endian order (most significant byte first).
+
 		buffer.writeUint8(Number((val >> 16) & 0xff));
 		buffer.writeUint8(Number((val >> 8) & 0xff));
 		buffer.writeUint8(Number(val & 0xff));
