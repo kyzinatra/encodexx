@@ -1,9 +1,10 @@
 import { TNumberTypes, TYPES_RANGES } from "../constants/types";
 import { OutOfRangeError } from "../error/out-of-range";
+import { TSchema } from "../serializer/index.type";
 
 const KB = 1024;
 
-export class DataBuffer {
+export class DataBuffer<T = any> {
 	private _cursor: number = 0;
 
 	private ensureCapacity(requiredCapacity: number) {
@@ -16,6 +17,8 @@ export class DataBuffer {
 		this.unitView = newUnitView;
 		this.view = new DataView(newBuffer);
 	}
+	// Это поле нужно для строгости типизации typescript в сериализаторе
+	private _id: T | null = null;
 
 	private set cursor(n: number) {
 		//? rsize
@@ -65,9 +68,7 @@ export class DataBuffer {
 			_buffer = new Uint8Array(_buffer);
 		}
 
-		//@ts-expect-error we know that _buffer is Uint8Array
 		this.cursor += _buffer.length;
-		//@ts-expect-error we know that _buffer is Uint8Array
 		this.unitView.set(_buffer, this.cursor - _buffer.length);
 	}
 	readBuffer(length: number) {

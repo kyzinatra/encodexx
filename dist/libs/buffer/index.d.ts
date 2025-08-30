@@ -1,7 +1,8 @@
-export declare class DataBuffer {
+export declare class DataBuffer<T = any> {
     private size;
     private _cursor;
     private ensureCapacity;
+    private _id;
     private set cursor(value);
     get cursor(): number;
     resetCursor(): void;

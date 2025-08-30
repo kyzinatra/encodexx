@@ -110,10 +110,17 @@ export class Serializer<T extends TSchema> {
 		};
 	}
 
-	decode(buff: DataBuffer | ArrayBuffer | Uint8Array) {
+	decode(buff: DataBuffer<T> | ArrayBuffer | Uint8Array) {
 		if (buff instanceof ArrayBuffer) buff = new DataBuffer(buff);
 		if (buff instanceof Uint8Array) {
-			buff = new DataBuffer(buff.buffer.slice(buff.byteOffset, buff.byteOffset + buff.byteLength));
+			if (buff.buffer instanceof SharedArrayBuffer) {
+				const arrayBuffer = new ArrayBuffer(buff.byteLength);
+				const uint8View = new Uint8Array(arrayBuffer);
+				uint8View.set(buff);
+				buff = new DataBuffer(arrayBuffer);
+			} else {
+				buff = new DataBuffer(buff.buffer.slice(buff.byteOffset, buff.byteOffset + buff.byteLength));
+			}
 		}
 		if (this.options?.resetCursor) buff.resetCursor();
 
@@ -125,7 +132,7 @@ export class Serializer<T extends TSchema> {
 		return this.compiledSchema.decode(buff);
 	}
 
-	encode(obj: TConvertValueToType<T>, buff?: DataBuffer) {
+	encode(obj: TConvertValueToType<T>, buff?: DataBuffer<T>) {
 		if (!buff) buff = new DataBuffer();
 		else if (this.options?.resetCursor) buff.resetCursor();
 
@@ -147,6 +154,14 @@ export class Serializer<T extends TSchema> {
 	private set name(s: string) {
 		this._name = ((this._name << 5) + this._name + textEncoder.encode(s).reduce((a, l) => a + l)) % (1 << 30);
 	}
+
+	map(
+		buff: Parameters<typeof this.decode>[0],
+		cb: (value: TConvertValueToType<T>) => TConvertValueToType<T>
+	): DataBuffer<T> {
+		return this.encode(cb(this.decode(buff)));
+	}
+
 	static equal(schema1: TSchema, schema2: TSchema) {
 		const stack1: TSchema[] = [schema1];
 		const stack2: TSchema[] = [schema2];

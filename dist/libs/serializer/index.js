@@ -113,7 +113,15 @@ class Serializer {
         if (buff instanceof ArrayBuffer)
             buff = new buffer_1.DataBuffer(buff);
         if (buff instanceof Uint8Array) {
-            buff = new buffer_1.DataBuffer(buff.buffer.slice(buff.byteOffset, buff.byteOffset + buff.byteLength));
+            if (buff.buffer instanceof SharedArrayBuffer) {
+                const arrayBuffer = new ArrayBuffer(buff.byteLength);
+                const uint8View = new Uint8Array(arrayBuffer);
+                uint8View.set(buff);
+                buff = new buffer_1.DataBuffer(arrayBuffer);
+            }
+            else {
+                buff = new buffer_1.DataBuffer(buff.buffer.slice(buff.byteOffset, buff.byteOffset + buff.byteLength));
+            }
         }
         if (this.options?.resetCursor)
             buff.resetCursor();
@@ -143,6 +151,9 @@ class Serializer {
     }
     set name(s) {
         this._name = ((this._name << 5) + this._name + textEncoder.encode(s).reduce((a, l) => a + l)) % (1 << 30);
+    }
+    map(buff, cb) {
+        return this.encode(cb(this.decode(buff)));
     }
     static equal(schema1, schema2) {
         const stack1 = [schema1];

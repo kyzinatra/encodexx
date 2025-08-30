@@ -101,4 +101,43 @@ describe("t.int32 type", () => {
 
 		expect(decoded).toEqual(original);
 	});
+
+	it("should handle map an array of objects with int32 fields correctly", () => {
+		const serializer = new Serializer({
+			items: [
+				{
+					value: t.int32,
+					extra: {
+						flag: t.int32,
+					},
+				},
+			],
+		});
+
+		const original = {
+			items: [
+				{ value: 100000, extra: { flag: -100000 } },
+				{ value: 987654, extra: { flag: -987654 } },
+			],
+		};
+		const encoded = serializer.encode(original);
+		const decoded = serializer.decode(encoded);
+
+		expect(decoded).toEqual(original);
+
+		const mapped = serializer.map(encoded, (value) => {
+			return {
+				items: [{ value: 12, extra: { flag: -234 } }, ...value.items, { value: 12, extra: { flag: -234 } }],
+			};
+		});
+
+		expect(serializer.decode(mapped)).toEqual({
+			items: [
+				{ value: 12, extra: { flag: -234 } },
+				{ value: 100000, extra: { flag: -100000 } },
+				{ value: 987654, extra: { flag: -987654 } },
+				{ value: 12, extra: { flag: -234 } },
+			],
+		});
+	});
 });

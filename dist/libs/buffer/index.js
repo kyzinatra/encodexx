@@ -40,6 +40,8 @@ class DataBuffer {
     constructor(newBuffer, size = KB) {
         this.size = size;
         this._cursor = 0;
+        // Это поле нужно для строгости типизации typescript в сериализаторе
+        this._id = null;
         this.textDecoder = new TextDecoder();
         this.textEncoder = new TextEncoder();
         this._buffer = newBuffer ? newBuffer : new ArrayBuffer(size);
@@ -55,9 +57,7 @@ class DataBuffer {
         if (_buffer instanceof ArrayBuffer) {
             _buffer = new Uint8Array(_buffer);
         }
-        //@ts-expect-error we know that _buffer is Uint8Array
         this.cursor += _buffer.length;
-        //@ts-expect-error we know that _buffer is Uint8Array
         this.unitView.set(_buffer, this.cursor - _buffer.length);
     }
     readBuffer(length) {
